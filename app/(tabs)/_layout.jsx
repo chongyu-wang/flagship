@@ -27,10 +27,10 @@ const TabsLayout = () => {
         <Tabs
             screenOptions={{
                 tabBarShowLabel: false,
-                tabBarActiveTintColor: '#FFD900',
+                tabBarActiveTintColor: '#FF4500',
                 tabBarInactiveTintColor: '#CDCDE0',
                 tabBarStyle: {
-                    backgroundColor: '#161622',
+                    backgroundColor: '#090909',
                     borderTopWidth: 1,
                     borderTopColor: '#232533'
                 }
@@ -52,15 +52,30 @@ const TabsLayout = () => {
                 }}
             />
             <Tabs.Screen 
-                name="bookmark"
+                name="appcalendar"
                 options={{
-                    title: 'Bookmark',
+                    title: 'Calendar',
                     headerShown: false,
                     tabBarIcon: ({ color, focused }) => (
                         <TabIcon
-                            icon={icons.bookmark}
+                            icon={icons.calendar}
                             color={color}
-                            name="Bookmark"
+                            name="Calendar"
+                            focused={focused}
+                        />
+                    )
+                }}
+            />
+            <Tabs.Screen 
+                name="chat"
+                options={{
+                    title: 'chat',
+                    headerShown: false,
+                    tabBarIcon: ({ color, focused }) => (
+                        <TabIcon
+                            icon={icons.chat}
+                            color={color}
+                            name="Chat"
                             focused={focused}
                         />
                     )
