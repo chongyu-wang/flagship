@@ -5,9 +5,12 @@
 # chatGPT API KEY
 # sk-proj-PADSaMfnraCdxvk1vSekT3BlbkFJfiXBwgJPrCL8FZKEnFnG
 
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 # from flask_cors import CORS
 from pyht import Client, TTSOptions, Format
+from google.cloud import speech
+import openai
+import requests
 
 app = Flask(__name__)
 # CORS(app)  # Enable CORS for all routes
@@ -49,6 +52,55 @@ def stream_audio():
             yield chunk
 
     return Response(generate(), mimetype='audio/mpeg')
+
+
+
+# ***STARTER CODE***
+@app.route('/speech-to-text', methods=['POST'])
+def speech_to_text():
+    audio_uri = request.json.get('audioUri')
+    client = speech.SpeechClient()
+
+    audio = speech.RecognitionAudio(uri=audio_uri)
+    config = speech.RecognitionConfig(
+        encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+        sample_rate_hertz=16000,
+        language_code="en-US",
+    )
+
+    response = client.recognize(config=config, audio=audio)
+    transcript = " ".join([result.alternatives[0].transcript for result in response.results])
+
+    return jsonify({"transcript": transcript})
+
+
+@app.route('/chatgpt', methods=['POST'])
+def chatgpt():
+    prompt = request.json.get('prompt')
+    openai.api_key = 'YOUR_OPENAI_API_KEY'
+    response = openai.Completion.create(
+        engine="davinci-codex",
+        prompt=prompt,
+        max_tokens=150
+    )
+    text = response.choices[0].text.strip()
+    return jsonify({"response": text})
+
+
+
+@app.route('/text-to-speech', methods=['POST'])
+def text_to_speech():
+    text = request.json.get('text')
+    response = requests.post(
+        'https://play.ht/api/v1/convert',
+        json={"text": text, "voice": "en_us", "speed": 1},
+        headers={"Authorization": f"Bearer YOUR_PLAY_HT_API_KEY"}
+    )
+    audio_url = response.json().get('audioUrl')
+    return jsonify({"audioUrl": audio_url})
+
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000)
