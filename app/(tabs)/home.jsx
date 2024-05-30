@@ -8,6 +8,7 @@ import EmptyState from '../../components/EmptyState'
 import { getAllPosts, getLatestPosts } from '../../lib/appwrite'
 import useAppwrite from '../../lib/useAppwrite'
 import Card from '../../components/Card'
+import { router } from 'expo-router'
 
 const Home = () => {
   const { data: posts, refetch }= useAppwrite(getAllPosts);
@@ -21,6 +22,8 @@ const Home = () => {
   }
 
   console.log(posts);
+
+  router.replace("/questionaire");
 
   return (
     <SafeAreaView className="bg-primary h-full">
