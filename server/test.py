@@ -76,7 +76,6 @@ def speech_to_text():
 
     return jsonify({"transcript": transcript})
 
-
 @app.route('/chatgpt', methods=['POST'])
 def chatgpt():
     try:

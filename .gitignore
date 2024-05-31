@@ -10,6 +10,15 @@ npm-debug.*
 *.orig.*
 web-build/
 
+# Exclude virtual environment directory
+venv/
+VENV/
+ENV/
+env/
+
+# Exclude environment variable files
+.env
+
 # macOS
 .DS_Store
 
