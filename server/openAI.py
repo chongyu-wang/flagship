@@ -41,6 +41,7 @@ class Gpt:
             chat = openai.chat.completions.create(
                 model = "gpt-3.5-turbo", messages = self.messages
             )
+            print("AAAAA", chat)
             reply = chat.choices[0].message.content
             return reply
 

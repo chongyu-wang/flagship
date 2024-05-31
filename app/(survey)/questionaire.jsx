@@ -40,6 +40,7 @@ const Questionaire = () => {
             const username = user.user.username;
             const jsonData = {
                 username: username,
+                prompt: "help me guage this peron's personality",
                 questionaire: questions.map((question, index) => ({
                     question: question,
                     answer: newAnswers[index]
@@ -74,8 +75,8 @@ const Questionaire = () => {
                 console.error('Error:', error);
             })
             .finally(() => {
-                router.replace("/home");
-                // console.log("A");
+                // router.replace("/home");
+                console.log("A");
             });
             
         }
