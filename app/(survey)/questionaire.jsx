@@ -47,9 +47,9 @@ const Questionaire = () => {
             console.log(JSON.stringify(jsonData));
             // Alert.alert("Submitted Answers", JSON.stringify(jsonData));
             // Here you would handle the actual saving of answers, e.g., sending them to an API
+            router.replace("/home");
         }
 
-        router.replace("/home");
     };
 
     return (

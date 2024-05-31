@@ -23,7 +23,7 @@ const Home = () => {
 
   console.log(posts);
 
-  router.replace("/questionaire");
+  // router.replace("/questionaire");
 
   return (
     <SafeAreaView className="bg-primary h-full">
