@@ -21,7 +21,7 @@ const Home = () => {
     setRefreshing(false);
   }
 
-  console.log(posts);
+  // console.log(posts);
 
   // router.replace("/questionaire");
 

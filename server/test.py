@@ -8,9 +8,12 @@
 from flask import Flask, request, Response, jsonify
 # from flask_cors import CORS
 from pyht import Client, TTSOptions, Format
-from google.cloud import speech
-import openai
+# from google.cloud import speech
+# import openai
 import requests
+from openAI import Gpt
+
+gpt = Gpt()
 
 app = Flask(__name__)
 # CORS(app)  # Enable CORS for all routes
@@ -76,15 +79,34 @@ def speech_to_text():
 
 @app.route('/chatgpt', methods=['POST'])
 def chatgpt():
-    prompt = request.json.get('prompt')
-    openai.api_key = 'YOUR_OPENAI_API_KEY'
-    response = openai.Completion.create(
-        engine="davinci-codex",
-        prompt=prompt,
-        max_tokens=150
-    )
-    text = response.choices[0].text.strip()
-    return jsonify({"response": text})
+    try:
+        print("Request received")
+        prompt = request.json.get('input')
+        print("Prompt:", prompt)
+        gptPrompt = ""
+        for key, value in prompt.items():
+            gptPrompt += str(key)
+            gptPrompt += str(value)
+        
+        print(gptPrompt)
+        
+        # Check the format of the prompt
+        if not prompt:
+            return jsonify({"error": "No prompt provided"}), 400
+        
+        # Call to your GPT function
+        response = gpt.getResponse(gptPrompt)
+        print("Response from GPT:", response)
+        
+        # Extract the text from the response
+        text = response
+        print("Extracted Text:", text)
+        
+        return jsonify({"response": text})
+    
+    except Exception as e:
+        print("Error occurred:", str(e))
+        return jsonify({"error": str(e)}), 500
 
 
 
