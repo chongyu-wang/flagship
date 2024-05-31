@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import CustomButton from '../../components/CustomButton';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { ProgressBar } from 'react-native-paper';
+import { router } from 'expo-router';
 
 const questions = [
   "Can you describe your childhood and any memorable events or experiences?",
@@ -44,9 +45,11 @@ const Questionaire = () => {
                 }))
             };
             console.log(JSON.stringify(jsonData));
-            Alert.alert("Submitted Answers", JSON.stringify(jsonData));
+            // Alert.alert("Submitted Answers", JSON.stringify(jsonData));
             // Here you would handle the actual saving of answers, e.g., sending them to an API
         }
+
+        router.replace("/home");
     };
 
     return (
