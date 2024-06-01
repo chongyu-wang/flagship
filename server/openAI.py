@@ -1,5 +1,10 @@
 import openai
-openai.api_key = "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"
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
 def runTest():

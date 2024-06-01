@@ -3,3 +3,5 @@ pyht
 flask_cors
 requests==2.26.0
 google-cloud-speech==2.5.0
+sockets
+python-dotenv

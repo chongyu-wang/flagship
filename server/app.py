@@ -1,79 +1,144 @@
-import os
-from flask import Flask, request, jsonify, send_file
-from config import Config
-from google.cloud import speech
-import openai
+# PLAYHT API
+# UserID: "BiSrSjpYVPM7ieJ9MjD2PzITvbj2"
+# SecretKey: e02224a1bd224bd9a1d93b14598c0aea
+
+# chatGPT API KEY
+# sk-proj-PADSaMfnraCdxvk1vSekT3BlbkFJfiXBwgJPrCL8FZKEnFnG
+
+from flask import Flask, request, Response, jsonify
+# from flask_cors import CORS
+from pyht import Client, TTSOptions, Format
+# from google.cloud import speech
+# import openai
 import requests
-import io
+from openAI import Gpt
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+GOOGLE_CLOUD_SPEECH_TO_TEXT_API_KEY = os.getenv('GOOGLE_CLOUD_SPEECH_TO_TEXT_API_KEY')
+PLAY_HT_API_KEY = os.getenv('PLAY_HT_API_KEY')
+PLAY_HT_USER_ID = os.getenv('PLAY_HT_USER_ID')
+SERVER_IP = os.getenv('SERVER_IP')
+
+
+gpt = Gpt()
 
 app = Flask(__name__)
-app.config.from_object(Config)
+# CORS(app)  # Enable CORS for all routes
 
-# Initialize Google Cloud Speech client
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = Config.GOOGLE_APPLICATION_CREDENTIALS
-speech_client = speech.SpeechClient()
+# Initialize PlayHT API with your credentials
+client = Client(PLAY_HT_USER_ID, PLAY_HT_API_KEY)
+class Audio:
+    def __init__(self):
+        self.text = ""
+    def setText(self, newText):
+        self.text = newText
+    def getText(self):
+        return self.text
+    
+audio = Audio()
 
-# ChatGPT setup
-openai.api_key = Config.CHATGPT_API_KEY
+@app.route('/post-audio', methods=["POST"])
+def post_audio():
+    data = request.json
+    text = data.get('text', 'Hello, this is a default text')
+    audio.setText(text)
+    return Response(status=200)  # Return a response to indicate success
 
-@app.route('/process_audio', methods=['POST'])
-def process_audio():
-    if 'audio' not in request.files:
-        return jsonify({'error': 'No audio file provided'}), 400
+@app.route('/stream-audio')
+def stream_audio():
+    def generate():
+        text = audio.getText()
+        
+        options = TTSOptions(
+            voice="s3://voice-cloning-zero-shot/d9ff78ba-d016-47f6-b0ef-dd630f59414e/female-cs/manifest.json",
+            sample_rate=44_100,
+            format=Format.FORMAT_MP3,
+            speed=1,
+        )
+        
+        # Must use turbo voice engine for the best latency
+        for chunk in client.tts(text=text, voice_engine="PlayHT2.0-turbo", options=options):
+            yield chunk
 
-    audio_file = request.files['audio']
+    return Response(generate(), mimetype='audio/mpeg')
 
-    # Step 1: Send the audio to Google Cloud Speech-to-Text API
-    audio_content = audio_file.read()
-    audio = speech.RecognitionAudio(content=audio_content)
+
+
+# ***STARTER CODE***
+@app.route('/speech-to-text', methods=['POST'])
+def speech_to_text():
+    audio_uri = request.json.get('audioUri')
+    client = speech.SpeechClient()
+
+    audio = speech.RecognitionAudio(uri=audio_uri)
     config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=16000,
-        language_code="en-US"
+        language_code="en-US",
     )
+
+    response = client.recognize(config=config, audio=audio)
+    transcript = " ".join([result.alternatives[0].transcript for result in response.results])
+
+    return jsonify({"transcript": transcript})
+
+@app.route('/chatgpt', methods=['POST'])
+def chatgpt():
+    try:
+        print("Request received")
+        prompt = request.json.get('input')
+        print("Prompt:", prompt)
+        gptPrompt = ""
+        for key, value in prompt.items():
+            gptPrompt += str(key)
+            gptPrompt += str(value)
+        
+        print(gptPrompt)
+        
+        # Check the format of the prompt
+        if not prompt:
+            return jsonify({"error": "No prompt provided"}), 400
+        
+        # Call to your GPT function
+        response = gpt.getResponse(gptPrompt)
+        print("Response from GPT:", response)
+        
+        # Extract the text from the response
+        text = response
+        print("Extracted Text:", text)
+        
+        return jsonify({"response": text})
     
-    response = speech_client.recognize(config=config, audio=audio)
-    if not response.results:
-        return jsonify({'error': 'Could not transcribe audio'}), 400
+    except Exception as e:
+        print("Error occurred:", str(e))
+        return jsonify({"error": str(e)}), 500
 
-    transcription = response.results[0].alternatives[0].transcript
 
-    # Step 2: Send the transcription to ChatGPT
-    chatgpt_response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=transcription,
-        max_tokens=150
+
+@app.route('/text-to-speech', methods=['POST'])
+def text_to_speech():
+    text = request.json.get('text')
+    response = requests.post(
+        'https://play.ht/api/v1/convert',
+        json={"text": text, "voice": "en_us", "speed": 1},
+        headers={"Authorization": f"Bearer YOUR_PLAY_HT_API_KEY"}
     )
-    chatgpt_text = chatgpt_response.choices[0].text.strip()
+    audio_url = response.json().get('audioUrl')
+    return jsonify({"audioUrl": audio_url})
 
-    # Step 3: Send the ChatGPT response to Play.ht API
-    play_ht_response = requests.post(
-        "https://play.ht/api/v1/convert",
-        json={
-            "voice": "en_us_male",
-            "content": [chatgpt_text]
-        },
-        headers={
-            "Authorization": f"Bearer {Config.PLAY_HT_API_KEY}",
-            "X-User-ID": Config.PLAY_HT_USER_ID
-        }
-    )
-    if play_ht_response.status_code != 200:
-        return jsonify({'error': 'Could not generate audio'}), 500
 
-    audio_url = play_ht_response.json().get('audio_url')
-    if not audio_url:
-        return jsonify({'error': 'No audio URL returned'}), 500
 
-    audio_data = requests.get(audio_url).content
-    audio_stream = io.BytesIO(audio_data)
 
-    return send_file(
-        audio_stream,
-        mimetype='audio/mpeg',
-        as_attachment=True,
-        download_name='response.mp3'
-    )
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=3000)
 
-# if __name__ == '__main__':
-#     app.run(debug=True)
+
+
+
+
+
+
