@@ -5,6 +5,7 @@ import CustomButton from '../../components/CustomButton';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { ProgressBar } from 'react-native-paper';
 import { router } from 'expo-router';
+import { SERVER_IP } from '@env';
 
 const questions = [
   "Can you describe your childhood and any memorable events or experiences?",
@@ -52,7 +53,7 @@ const Questionaire = () => {
 
 
             setResponseData("Querying...");
-            fetch('http://35.2.213.35:3000/chatgpt', {
+            fetch(`http://${SERVER_IP}:3000/chatgpt`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

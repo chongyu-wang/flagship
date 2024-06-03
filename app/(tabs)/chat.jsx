@@ -4,6 +4,7 @@ import { Audio } from 'expo-av';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../../components/CustomButton';
 import Animated, { Easing, useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { SERVER_IP } from '@env';
 
 const Chat = () => {
   const [sound, setSound] = useState(null);
@@ -13,7 +14,7 @@ const Chat = () => {
   const fetchAudio = async () => {
     try {
       setIsLoading(true);
-      await fetch('http://10.10.241.128:3000/post-audio', {
+      await fetch(`http://${SERVER_IP}:3000/post-audio`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -21,7 +22,7 @@ const Chat = () => {
         body: JSON.stringify({ text }),
       });
 
-      const response = await fetch('http://10.10.241.128:3000/stream-audio');
+      const response = await fetch(`http://${SERVER_IP}:3000/stream-audio`);
       const uri = response.url;
 
       playAudio(uri);
