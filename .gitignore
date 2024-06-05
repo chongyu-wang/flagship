@@ -15,6 +15,7 @@ venv/
 VENV/
 ENV/
 env/
+Scripts/
 
 # Exclude environment variable files
 .env
