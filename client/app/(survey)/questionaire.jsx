@@ -7,7 +7,8 @@ import { ProgressBar } from 'react-native-paper';
 import { router } from 'expo-router';
 // import { SERVER_IP } from '@env';
 
-const SERVER_IP = process.env.SERVER_IP;
+const SERVER_IP = "35.2.221.249";
+// TODO: Replace with your actual server IP address
 
 const questions = [
   "Can you describe your childhood and any memorable events or experiences?",
