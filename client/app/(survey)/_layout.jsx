@@ -7,7 +7,7 @@ const QuestionaireLayout = () => {
     <>
       <Stack>
         <Stack.Screen
-          name="questionaire"
+          name="survey"
           options={{
             headerShown: false
           }}
