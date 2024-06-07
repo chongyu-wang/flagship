@@ -1,32 +1,37 @@
 import os
-from google.cloud import storage
+import sys
+# from google.cloud import storage
 from werkzeug.utils import secure_filename
+
+# Add the project root to PYTHONPATH
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
+# Use relative imports
 from speech2text.speech_to_text import process_audio as google_process_audio
+from text2speech.text_to_speech import stream_audio_from_text
 
 def save_audio_file_to_gcs(audio_data, bucket_name, destination_blob_name):
-    # Initialize a storage client
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(destination_blob_name)
-
-    # Upload the audio data
     blob.upload_from_file(audio_data, content_type=audio_data.content_type)
-
-    # Get the public URL for the file
     public_url = blob.public_url
-
     return public_url
 
 def process_audio_controller(audio_data):
-    # Save the uploaded audio file to Google Cloud Storage
     bucket_name = 'your-bucket-name'
     destination_blob_name = f'audio_files/{secure_filename(audio_data.filename)}'
     audio_url = save_audio_file_to_gcs(audio_data, bucket_name, destination_blob_name)
-
-    # Process the audio file using Google Cloud Speech-to-Text
     text = google_process_audio(audio_url)
-
     return text
+
+
+def text_to_speech_controller(text_data):
+    return stream_audio_from_text(text_data)
+
+# test = text_to_speech_controller("hello this is a test audio!!!!!")
+
+# print(type(test))
 
 
 

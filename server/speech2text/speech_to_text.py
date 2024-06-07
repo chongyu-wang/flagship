@@ -1,5 +1,5 @@
+# from google.cloud import speech_v1p1beta1 as speech
 import requests
-from google.cloud import speech
 
 def process_audio(audio_url):
     client = speech.SpeechClient()
@@ -22,4 +22,5 @@ def process_audio(audio_url):
         result_text += result.alternatives[0].transcript
 
     return result_text
+
 
