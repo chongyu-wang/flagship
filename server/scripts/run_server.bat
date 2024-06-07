@@ -15,7 +15,7 @@ REM Change to the parent directory
 cd ..
 
 REM Run the Flask app
-flask run
+python run.py
 
 REM Check for errors
 IF %ERRORLEVEL% NEQ 0 (
