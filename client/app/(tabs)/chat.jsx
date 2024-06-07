@@ -72,7 +72,7 @@ const Chat = () => {
 
             <TextInput
               className="bg-black text-gray-400 p-4 rounded-xl mb-4 w-full h-40 border-2 border-gray-200"
-              placeholder="You are talking to an ai. Say hi!!!"
+              placeholder="You are talking to Michael Jordan. Say hi!!!"
               placeholderTextColor="#7b7b8b"
               value={text}
               onChangeText={setText}
