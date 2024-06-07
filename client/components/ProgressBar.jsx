@@ -3,8 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
 
 export default function Bar({ completed, maximum }) {
-    const progress = (typeof completed === 'number' && typeof maximum === 'number' && maximum > 0) ? completed / maximum : 0;
-
+  const progress = completed / maximum;
   return (
     <View style={styles.container}>
       <ProgressBar progress={progress} color="#f0a500" style={styles.progressBar} />

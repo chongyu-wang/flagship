@@ -7,15 +7,15 @@ export default function ProgressDisplay({firstCheckpointCompletion, firstCheckpo
   return (
     <View style={styles.statusBar}>
       <View style={styles.step}>
-        <Checkpoint number="1" active= { firstCheckpointCompletion !== 0} />
+        <Checkpoint number="1" active />
         <Bar completed={firstCheckpointCompletion} maximum={firstCheckpointMax} />
       </View>
       <View style={styles.step}>
-        <Checkpoint number="2" active= {secondCheckpointCompletion !== 0} />
+        <Checkpoint number="2" active= {firstCheckpointCompletion === firstCheckpointMax} />
         <Bar completed={secondCheckpointCompletion} maximum={secondCheckpointMax} />
       </View>
       <View style={styles.step}>
-        <Checkpoint number="3" active= {secondCheckpointCompletion === 100} />
+        <Checkpoint number="3" active= {secondCheckpointCompletion === secondCheckpointMax} />
       </View>
     </View>
   );
