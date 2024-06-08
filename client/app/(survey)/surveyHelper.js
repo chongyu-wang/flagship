@@ -1,12 +1,12 @@
 export const userDataQuestions = [
     "What is your name?",
     "What is your gender?",
-    "What is your age?"
+    "When is your birthday?"
 ];
 
 export const questionnaireQuestions = [
-    "Can you describe your childhood and any memorable events or experiences?",
-    "What is the most significant achievement in your life so far, and why?",
+    "Tell us a little about your personality. This will help prompt our models to be more authentic.",
+    "Describe your voice for us (e.g. tone, cadence, acccent, etc):",
     // "Have you faced any major challenges or obstacles, and how did you overcome them?",
     // "What was a pivotal moment or turning point in your career or personal life?",
     // "Can you tell me about a time when you had to make a difficult decision?",
@@ -32,7 +32,6 @@ export const handleUserDataSubmit = (newAnswer, setAnswers, setSurveyPhase) => {
 export const handleQuestionnaireSubmit = (newAnswer, setAnswers, setSurveyPhase) => {
     registerAnswer(newAnswer, setAnswers);
     setSurveyPhase(2);
-    alert("done");
     // All questions answered, handle form submission
     // const username = user.user.username;
     // const jsonData = {

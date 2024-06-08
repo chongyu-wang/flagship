@@ -2,7 +2,7 @@ import { View, Text } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
-const QuestionaireLayout = () => {
+export default function SurveyLayout() {
   return (
     <>
       <Stack>
@@ -18,5 +18,3 @@ const QuestionaireLayout = () => {
     </>
   )
 }
-
-export default QuestionaireLayout
