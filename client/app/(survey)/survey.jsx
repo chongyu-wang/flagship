@@ -50,6 +50,7 @@ export default function Survey() {
                 setSurveyPhase={setSurveyPhase}
                 onNextQuestion={onNextQuestion}
                 onSubmit={onSubmit}
+                displayDate={surveyPhase === 0 && answers.length === 2}
             />
 
             <ProgressDisplay

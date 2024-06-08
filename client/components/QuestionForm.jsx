@@ -2,24 +2,23 @@ import { View, Text, TextInput, Keyboard, TouchableWithoutFeedback } from 'react
 import {Picker} from '@react-native-picker/picker';
 import React, { useRef, useState } from 'react';
 import CustomButton from './CustomButton';
+import DateInput from './DatePicker';
 
-export default function QuestionForm({ question, isLastQuestion, setAnswers, setSurveyPhase, onNextQuestion, onSubmit }) {
+export default function QuestionForm({ question, isLastQuestion, setAnswers, setSurveyPhase, onNextQuestion, onSubmit, displayDate }) {
     const userInput = useRef('');
     const textInputRef = useRef(null);
     const [selectedGender, setSelectedGender] = useState('male');
     const [selectedAge, setSelectedAge] = useState(18);
 
     const handlePress = () => {
-        let newAnswer;
-        if (question === "What is your gender?") {
-            newAnswer = selectedGender;
-        } else if (question === "What is your age?") {
-            newAnswer = selectedAge;
-        } else {
+        let newAnswer = '';
+        if (!displayDate ) {
             newAnswer = userInput.current;
+            userInput.current = '';
+            textInputRef.current.clear();
         }
-        userInput.current = '';
-        if (textInputRef.current) textInputRef.current.clear();
+
+        
 
         if (isLastQuestion) {
             onSubmit(newAnswer, setAnswers, setSurveyPhase);
@@ -74,9 +73,19 @@ export default function QuestionForm({ question, isLastQuestion, setAnswers, set
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View className="w-full justify-center items-center min-h-[70vh] px-4">
-                <View className="w-full mb-4 items-center">
-                    {renderInput()}
-                    <Text className="text-lg mb-2 mt-12 text-white">{question}</Text>
+                <View className="w-full mb-4">
+                    <Text className="text-lg mb-2 text-white">{question}</Text>
+                    {displayDate ?
+                        (<DateInput>
+
+                        </DateInput>) :
+                        (<TextInput
+                            className="border p-2 rounded border-secondary text-white"
+                            multiline
+                            ref={textInputRef}
+                            onChangeText={text => userInput.current = text}
+                        />)
+                    }
                 </View>
                 <CustomButton
                     title={isLastQuestion ? "Submit" : "Next"}
