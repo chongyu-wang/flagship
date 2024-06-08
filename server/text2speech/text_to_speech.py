@@ -7,6 +7,44 @@ load_dotenv()
 PLAY_HT_API_KEY = os.getenv('PLAY_HT_API_KEY')
 PLAY_HT_USER_ID = os.getenv('PLAY_HT_USER_ID')
 
+voices = {
+  "Andrew Tate": {
+    "id": "s3://voice-cloning-zero-shot/76e35797-7bb5-48e6-bff8-3e2b0e41b7d6/enhanced/manifest.json",
+    "name": "Andrew Tate",
+    "type": "instant",
+    "gender": "male",
+    "voice_engine": "PlayHT2.0"
+  },
+  "Joe Biden": {
+    "id": "s3://voice-cloning-zero-shot/4b5693de-7825-494b-b239-7f8be077db11/original/manifest.json",
+    "name": "Joe Biden",
+    "type": "instant",
+    "gender": "male",
+    "voice_engine": "PlayHT2.0"
+  },
+  "Alan Watts": {
+    "id": "s3://voice-cloning-zero-shot/be9e7cb8-47eb-4116-b522-7d01e859d538/original/manifest.json",
+    "name": "Alan Watts",
+    "type": "instant",
+    "gender": "male",
+    "voice_engine": "PlayHT2.0"
+  },
+  "Scarlett Johansson": {
+    "id": "s3://voice-cloning-zero-shot/6700c054-d804-494c-ba1c-2189e8c48809/original/manifest.json",
+    "name": "Scarlett Johansson",
+    "type": "instant",
+    "gender": "female",
+    "voice_engine": "PlayHT2.0"
+  },
+  "Michael Jordan": {
+    "id": "s3://voice-cloning-zero-shot/8be62a78-3ea5-4e36-9cb8-e8907f1babb3/original/manifest.json",
+    "name": "Michael Jordan",
+    "type": "instant",
+    "gender": "male",
+    "voice_engine": "PlayHT2.0"
+  }
+}
+
 
 
 def list_voices():
@@ -59,7 +97,8 @@ def stream_audio_from_text(text):
         # "voice": "s3://voice-cloning-zero-shot/76e35797-7bb5-48e6-bff8-3e2b0e41b7d6/enhanced/manifest.json",
         # "voice": "s3://voice-cloning-zero-shot/4b5693de-7825-494b-b239-7f8be077db11/original/manifest.json",
         # "voice": "s3://voice-cloning-zero-shot/be9e7cb8-47eb-4116-b522-7d01e859d538/original/manifest.json",
-        "voice": "s3://voice-cloning-zero-shot/6700c054-d804-494c-ba1c-2189e8c48809/original/manifest.json",
+        # "voice": "s3://voice-cloning-zero-shot/6700c054-d804-494c-ba1c-2189e8c48809/original/manifest.json",
+        "voice": voices["Michael Jordan"]["id"],
         "output_format": "mp3"
     }
     headers = {
