@@ -16,11 +16,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
-<<<<<<< HEAD
-    "@react-native-picker/picker": "^2.7.6",
-=======
     "@react-native-community/datetimepicker": "^8.1.0",
->>>>>>> 773ab74492018355a50d43feffc7664017d687d9
     "@react-navigation/native": "^6.0.2",
     "appwrite": "^14.0.1",
     "dotenv": "^16.4.5",
