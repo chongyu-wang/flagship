@@ -32,7 +32,7 @@ const SignUp = () => {
       setUser(result);
       setIsLoggedIn(true);
 
-      router.replace('/home');
+      router.replace('/survey');
 
     } catch(error) {
       Alert.alert('Error', error.message);

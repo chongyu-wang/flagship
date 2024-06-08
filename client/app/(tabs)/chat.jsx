@@ -4,13 +4,15 @@ import { Audio } from 'expo-av';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../../components/CustomButton';
 import { Buffer } from 'buffer';
+import TypingText from '../../components/TypingText';
 
-const SERVER_IP = '10.0.0.82';
+const SERVER_IP = '35.3.11.38';
 
 const Chat = () => {
   const [sound, setSound] = useState(null);
   const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const fetchAudio = async () => {
     setText('');
@@ -45,9 +47,11 @@ const Chat = () => {
     );
     setSound(sound);
     setIsLoading(false);
+    setIsPlaying(true); // Set isPlaying to true when the audio starts
 
     sound.setOnPlaybackStatusUpdate((status) => {
       if (status.didJustFinish) {
+        setIsPlaying(false);
         sound.unloadAsync();
       }
     });
@@ -64,29 +68,32 @@ const Chat = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView className="bg-primary h-full">
-        <View className="w-full justify-center items-center min-h-[85vh] px-4">
+        {!isPlaying ? (
+          <View className="w-full justify-center items-center min-h-[85vh] px-4">
 
-            {isLoading && (
-                <Text className="text-white">Loading...</Text>
-            )}
-
-            <TextInput
-              className="bg-black text-gray-400 p-4 rounded-xl mb-4 w-full h-40 border-2 border-gray-200"
-              placeholder="You are talking to Michael Jordan. Say hi!!!"
-              placeholderTextColor="#7b7b8b"
-              value={text}
-              onChangeText={setText}
-              multiline={true}
-              numberOfLines={4}
+              {isLoading && (
+                  <Text className="text-white">Loading...</Text>
+              )}
+  
+              <TextInput
+                className="bg-black text-gray-400 p-4 rounded-xl mb-4 w-full h-40 border-2 border-gray-200"
+                placeholder="You are talking to Alan Watts. Say hi!!!"
+                placeholderTextColor="#7b7b8b"
+                value={text}
+                onChangeText={setText}
+                multiline={true}
+                numberOfLines={4}
+              />
+  
+            <CustomButton
+              title="Get Audio Response"
+              handlePress={fetchAudio}
+              containerStyles="w-3/5 mt-8"
             />
+  
+          </View>
+        ) : <TypingText/>}
 
-          <CustomButton
-            title="Get Audio Response"
-            handlePress={fetchAudio}
-            containerStyles="w-3/5 mt-8"
-          />
-
-        </View>
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );

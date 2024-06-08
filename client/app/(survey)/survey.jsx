@@ -1,7 +1,7 @@
 import { Redirect } from 'expo-router';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ProgressDisplay from '../../components/ProgressDisplay';
 import QuestionForm from '../../components/QuestionForm';
 import { 
@@ -15,10 +15,27 @@ import {
 export default function Survey() {
     const [answers, setAnswers] = useState([]);
     const [surveyPhase, setSurveyPhase] = useState(0);
+    const [shouldRedirect, setShouldRedirect] = useState(false);
+
+    useEffect(() => {
+        if (surveyPhase === 2) {
+            const timeout = setTimeout(() => {
+                setShouldRedirect(true);
+            }, 10000);
+
+            return () => clearTimeout(timeout);
+        }
+    }, [surveyPhase]);
+
+    if (shouldRedirect) {
+        return <Redirect href="/home" />;
+    }
 
     if (surveyPhase === 2) {
         return (
-            <Redirect href="/home" />
+            <SafeAreaView className="bg-primary h-full justify-center items-center">
+                <Text className="text-white text-xl">Loading...</Text>
+            </SafeAreaView>
         );
     }
 
@@ -38,7 +55,6 @@ export default function Survey() {
 
     return (
         <SafeAreaView className="bg-primary h-full">
-
             <View className="items-center mt-8">
                 <Text className="text-2xl font-bold text-white">Tell us about yourself!</Text>
             </View>
@@ -51,6 +67,7 @@ export default function Survey() {
                 onNextQuestion={onNextQuestion}
                 onSubmit={onSubmit}
                 displayDate={surveyPhase === 0 && answers.length === 2}
+                surveyPhase={surveyPhase}
             />
 
             <ProgressDisplay

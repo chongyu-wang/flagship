@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import CustomButton from './CustomButton';
 import DateInput from './DatePicker';
 
-export default function QuestionForm({ question, isLastQuestion, setAnswers, setSurveyPhase, onNextQuestion, onSubmit, displayDate }) {
+export default function QuestionForm({ question, isLastQuestion, setAnswers, setSurveyPhase, surveyPhase, onNextQuestion, onSubmit, displayDate }) {
     const userInput = useRef('');
     const textInputRef = useRef(null);
 
@@ -34,10 +34,11 @@ export default function QuestionForm({ question, isLastQuestion, setAnswers, set
 
                         </DateInput>) :
                         (<TextInput
-                            className="border p-2 rounded-2xl border-secondary text-white"
+                            className={`border p-2 rounded-2xl border-secondary text-white ${surveyPhase === 1 && "h-40"}`}
                             multiline
                             ref={textInputRef}
                             onChangeText={text => userInput.current = text}
+                            numberOfLines={surveyPhase === 1 ? 4 : 1}
                         />)
                     }
                 </View>

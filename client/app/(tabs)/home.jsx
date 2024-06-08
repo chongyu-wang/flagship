@@ -14,6 +14,8 @@ const Home = () => {
   const { data: posts, refetch }= useAppwrite(getAllPosts);
   const { data: latestPosts }= useAppwrite(getLatestPosts);
   const [refreshing, setRefreshing] = useState(false);
+  // const { data: posts, refetch }= [];
+  // const { data: latestPosts }= [];
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -44,7 +46,7 @@ const Home = () => {
                 </Text>
                 <Text className="text-2xl font-psemibold
                 text-white">
-                  Charlie
+                  John
                 </Text>
               </View>
               <View className="mt-1.5">
