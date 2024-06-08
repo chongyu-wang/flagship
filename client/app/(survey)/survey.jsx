@@ -39,13 +39,6 @@ export default function Survey() {
     return (
         <SafeAreaView className="bg-primary h-full">
 
-            <ProgressDisplay
-                firstCheckpointCompletion={surveyPhase === 1 ? userDataQuestions.length : answers.length}
-                firstCheckpointMax={userDataQuestions.length}
-                secondCheckpointCompletion={surveyPhase === 1 ? answers.length : 0}
-                secondCheckpointMax={questionnaireQuestions.length}
-            />
-
             <View className="items-center mt-8">
                 <Text className="text-2xl font-bold text-white">Tell us about yourself!</Text>
             </View>
@@ -57,6 +50,13 @@ export default function Survey() {
                 setSurveyPhase={setSurveyPhase}
                 onNextQuestion={onNextQuestion}
                 onSubmit={onSubmit}
+            />
+
+            <ProgressDisplay
+                firstCheckpointCompletion={surveyPhase === 1 ? userDataQuestions.length : answers.length}
+                firstCheckpointMax={userDataQuestions.length}
+                secondCheckpointCompletion={surveyPhase === 1 ? answers.length : 0}
+                secondCheckpointMax={questionnaireQuestions.length}
             />
         </SafeAreaView>
     );
