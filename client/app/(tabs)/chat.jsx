@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { View, TextInput, Keyboard, TouchableWithoutFeedback, Text } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TextInput, Keyboard, TouchableWithoutFeedback, Text, Button, StyleSheet, Alert } from 'react-native';
 import { Audio } from 'expo-av';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../../components/CustomButton';
 import { Buffer } from 'buffer';
+import { speechToText, getCompletion } from '../../hooks/useApi';
 import TypingText from '../../components/TypingText';
 
 const SERVER_IP = '35.3.11.38';
@@ -12,6 +13,7 @@ const Chat = () => {
   const [sound, setSound] = useState(null);
   const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [recording, setRecording] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
   const fetchAudio = async () => {
@@ -57,6 +59,42 @@ const Chat = () => {
     });
   };
 
+  //added for real time speech to text
+  const startRecording = async () => {
+    try {
+      await Audio.requestPermissionsAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+
+      const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+      setRecording(recording);
+      await recording.startAsync();
+    } catch (err) {
+      console.error('Failed to start recording', err);
+    }
+  };
+
+  const stopRecording = async () => {
+    setIsLoading(true);
+    try {
+      await recording.stopAndUnloadAsync();
+      const uri = recording.getURI();
+      setRecording(null);
+
+      const result = await speechToText(uri);
+      const completion = await getCompletion(result.text);
+
+      setText(completion.text);
+    } catch (error) {
+      console.error('Failed to stop recording', error);
+      Alert.alert('Error', 'Failed to process the recording');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   React.useEffect(() => {
     return sound
       ? () => {
@@ -91,6 +129,15 @@ const Chat = () => {
               containerStyles="w-3/5 mt-8"
             />
   
+          {/* SpeechToTextTest component here */}
+          <View style={styles.speechToTextContainer}>
+            {recording ? (
+              <Button title="Stop Recording" onPress={stopRecording} />
+            ) : (
+              <Button title="Start Recording" onPress={startRecording} />
+            )}
+          </View>
+
           </View>
         ) : <TypingText/>}
 
@@ -99,6 +146,36 @@ const Chat = () => {
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#1a1a1a',
+  },
+  innerContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '85vh',
+    paddingHorizontal: 16,
+  },
+  loadingText: {
+    color: 'white',
+  },
+  textInput: {
+    backgroundColor: '#000',
+    color: '#7b7b8b',
+    padding: 16,
+    borderRadius: 10,
+    marginBottom: 16,
+    width: '100%',
+    height: 160,
+    borderWidth: 2,
+    borderColor: '#ccc',
+  },
+  speechToTextContainer: {
+    marginTop: 20,
+    width: '100%',
+  },
+});
+
 export default Chat;
-
-
