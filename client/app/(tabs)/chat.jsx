@@ -6,6 +6,10 @@ import CustomButton from '../../components/CustomButton';
 import { Buffer } from 'buffer';
 import { speechToText, getCompletion } from '../../hooks/useApi';
 import TypingText from '../../components/TypingText';
+import ChatTextInput from '../../components/ChatTextInput';
+// import ChatAnimation from '../../components/ChatAnimation';
+import LottieView from 'lottie-react-native';
+
 
 const SERVER_IP = '35.3.11.38';
 
@@ -140,6 +144,23 @@ const Chat = () => {
 
           </View>
         ) : <TypingText/>}
+        {
+        (!isPlaying && !isLoading) ? 
+        (
+          <ChatTextInput
+            text={text}
+            setText={setText}
+            fetchAudio={fetchAudio}
+          />
+        ) :
+        isLoading ?
+        (
+          <TypingText/>
+        ) :
+        (
+        <LottieView style={{flex: 1}} source={require("../../assets/lottie/VoiceChatAnimation.json")} autoPlay loop/>
+        )
+        }
 
       </SafeAreaView>
     </TouchableWithoutFeedback>

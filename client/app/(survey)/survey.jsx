@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState, useEffect } from 'react';
 import ProgressDisplay from '../../components/ProgressDisplay';
 import QuestionForm from '../../components/QuestionForm';
+import LottieView from 'lottie-react-native';
 import { 
     handleUserDataSubmit, 
     handleQuestionnaireSubmit, 
@@ -31,10 +32,11 @@ export default function Survey() {
         return <Redirect href="/home" />;
     }
 
-    if (surveyPhase === 2) {
+    if (surveyPhase === 2 ) {
         return (
-            <SafeAreaView className="bg-primary h-full justify-center items-center">
-                <Text className="text-white text-xl">Loading...</Text>
+            <SafeAreaView className="bg-primary h-full">
+                {/* <Text className="text-white text-xl">Loading...</Text> */}
+                <LottieView style={{flex: 1}} source={require("../../assets/lottie/LoadingAnimation.json")} autoPlay loop/>
             </SafeAreaView>
         );
     }

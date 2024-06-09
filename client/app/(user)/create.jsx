@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import CustomButton from '../../components/CustomButton';
+import { router } from 'expo-router';
 
 const Create = () => {
   const [title, setTitle] = useState('');
@@ -32,6 +33,11 @@ const Create = () => {
 
   return (
     <SafeAreaView className="bg-primary h-full p-4 min-h-[85vh]">
+      <TouchableOpacity onPress={() => router.replace('/home')}>
+        <Text className="text-white">
+          go home
+        </Text>
+      </TouchableOpacity>
       <View>
       <View className="mb-4 mt-16">
         <Text className="text-white text-lg mb-2">Event Title</Text>

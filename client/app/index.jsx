@@ -7,6 +7,7 @@ import TypeWriter from 'react-native-typewriter';
 import { images } from '../constants';
 import CustomButton from '../components/CustomButton';
 import { useGlobalContext } from '../context/GlobalProvider';
+import LottieView from 'lottie-react-native';
 
 export default function App() {
   const { isLoading, isLoggedIn } = useGlobalContext();
@@ -39,13 +40,31 @@ export default function App() {
 
   return (
     <SafeAreaView className="bg-primary h-full">
+      <LottieView 
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: -1 }}
+        source={require("../assets/lottie/BackgroundAnimation.json")} 
+        autoPlay 
+        loop 
+      />
       <ScrollView contentContainerStyle={{ height: '100%' }}>
-        <View className="w-full justify-center items-center min-h-[85vh] px-4">
-          <Image
-            source={images.logo}
-            className="max-w-[380px] w-full h-[250px]"
-            resizeMode="contain"
-          />
+        <View
+        className="w-full justify-center items-center min-h-[85vh] px-4">
+          <View className="max-w-[380px] w-full h-[250px]"
+            style={{
+              iosProp: {
+                shadowColor: "black",
+                shadowOffset: {width:-2, height:4},
+                shadowOpacity:0.26,
+                shadowRadius:5
+              }
+            }}
+          >
+            <Image
+              source={images.logo}
+              className="max-w-[380px] w-full h-[250px]"
+              resizeMode="contain"
+            />
+          </View>
 
           <Text className='text-white text-6xl font-bold mb-32'>
             Clone.ly
