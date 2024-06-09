@@ -1,8 +1,10 @@
 import base64
 from flask import Blueprint, request, jsonify
+from speech2text.speech_to_text import speech_to_text
 from .controllers.audio_controller import process_audio_controller, text_to_speech_controller
 from .controllers.question_controller import generate_questions_controller
 from .controllers.conversation_controller import mimic_conversation_controller, get_gpt_response
+import logging
 
 main = Blueprint('main', __name__)
 
@@ -38,4 +40,26 @@ def handle_text_to_speech():
     audio_base64 = base64.b64encode(audio).decode('utf-8')
     
     return jsonify({'audio': audio_base64, 'text_response': text_response})
+
+def init_app_routes(app):
+
+    # Configure logging
+    logging.basicConfig(level=logging.DEBUG)
+
+    @app.route('/api/speech-to-text', methods=['POST'])
+    def api_speech_to_text():
+        logging.debug('Received request for speech-to-text')
+        audio_url = request.json.get('audio_url')
+        logging.debug(f'Audio URL: {audio_url}')
+        if not audio_url:
+            logging.error('No audio URL provided')
+            return jsonify({'error': 'No audio URL provided'}), 400
+
+        try:
+            result = speech_to_text(audio_url)
+            logging.debug(f'Result: {result}')
+            return jsonify(result)
+        except Exception as e:
+            logging.error(f'Error processing audio: {e}')
+            return jsonify({'error': str(e)}), 500
 
