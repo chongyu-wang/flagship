@@ -74,11 +74,11 @@ video: {title,
                         className="w-full h-full rounded-xl mt-3"
                         resizeMode="cover"
                     />
-                    <Image
+                    {/* <Image
                         source={icons.play}
                         className="w-12 h-12 absolute"
                         resizeMode='contain'
-                    />
+                    /> */}
                 </TouchableOpacity>
             )}
         </View>

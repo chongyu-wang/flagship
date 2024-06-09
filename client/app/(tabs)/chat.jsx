@@ -5,6 +5,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../../components/CustomButton';
 import { Buffer } from 'buffer';
 import TypingText from '../../components/TypingText';
+import ChatTextInput from '../../components/ChatTextInput';
+// import ChatAnimation from '../../components/ChatAnimation';
+import LottieView from 'lottie-react-native';
+
 
 const SERVER_IP = '35.3.11.38';
 
@@ -68,31 +72,23 @@ const Chat = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView className="bg-primary h-full">
-        {!isPlaying ? (
-          <View className="w-full justify-center items-center min-h-[85vh] px-4">
-
-              {isLoading && (
-                  <Text className="text-white">Loading...</Text>
-              )}
-  
-              <TextInput
-                className="bg-black text-gray-400 p-4 rounded-xl mb-4 w-full h-40 border-2 border-gray-200"
-                placeholder="You are talking to Alan Watts. Say hi!!!"
-                placeholderTextColor="#7b7b8b"
-                value={text}
-                onChangeText={setText}
-                multiline={true}
-                numberOfLines={4}
-              />
-  
-            <CustomButton
-              title="Get Audio Response"
-              handlePress={fetchAudio}
-              containerStyles="w-3/5 mt-8"
-            />
-  
-          </View>
-        ) : <TypingText/>}
+        {
+        (!isPlaying && !isLoading) ? 
+        (
+          <ChatTextInput
+            text={text}
+            setText={setText}
+            fetchAudio={fetchAudio}
+          />
+        ) :
+        isLoading ?
+        (
+          <TypingText/>
+        ) :
+        (
+        <LottieView style={{flex: 1}} source={require("../../assets/lottie/VoiceChatAnimation.json")} autoPlay loop/>
+        )
+        }
 
       </SafeAreaView>
     </TouchableWithoutFeedback>

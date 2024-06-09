@@ -1,7 +1,6 @@
 import { Image, View, Text } from 'react-native'
 import { Tabs, Redirect } from 'expo-router';
 import { icons } from '../../constants';
-import 'react-native-reanimated';
 
 const TabIcon = ({ icon, color, name, focused}) => {
     return (
@@ -32,7 +31,9 @@ const TabsLayout = () => {
                 tabBarStyle: {
                     backgroundColor: '#090909',
                     borderTopWidth: 1,
-                    borderTopColor: '#232533'
+                    borderTopColor: '#232533',
+                    // marginTop: 20,
+                    height: 86,
                 }
             }}
         >
@@ -46,21 +47,6 @@ const TabsLayout = () => {
                             icon={icons.home}
                             color={color}
                             name="Home"
-                            focused={focused}
-                        />
-                    )
-                }}
-            />
-            <Tabs.Screen 
-                name="appcalendar"
-                options={{
-                    title: 'Calendar',
-                    headerShown: false,
-                    tabBarIcon: ({ color, focused }) => (
-                        <TabIcon
-                            icon={icons.calendar}
-                            color={color}
-                            name="Calendar"
                             focused={focused}
                         />
                     )
@@ -82,6 +68,21 @@ const TabsLayout = () => {
                 }}
             />
             <Tabs.Screen 
+                name="appcalendar"
+                options={{
+                    title: 'Calendar',
+                    headerShown: false,
+                    tabBarIcon: ({ color, focused }) => (
+                        <TabIcon
+                            icon={icons.calendar}
+                            color={color}
+                            name="Calendar"
+                            focused={focused}
+                        />
+                    )
+                }}
+            />
+            {/* <Tabs.Screen 
                 name="create"
                 options={{
                     title: 'Create',
@@ -95,8 +96,8 @@ const TabsLayout = () => {
                         />
                     )
                 }}
-            />
-            <Tabs.Screen 
+            /> */}
+            {/* <Tabs.Screen 
                 name="profile"
                 options={{
                     title: 'Profile',
@@ -110,7 +111,7 @@ const TabsLayout = () => {
                         />
                     )
                 }}
-            />
+            /> */}
         </Tabs>
     </>
   )

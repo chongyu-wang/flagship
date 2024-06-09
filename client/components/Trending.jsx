@@ -60,11 +60,11 @@ const TrendingItem = ({ activeItem, item }) => {
             overflow-hidden shadow-lg shadow-black/40"
             resizeMode='cover'
           />
-          <Image
+          {/* <Image
             source={icons.play}
             className="w-12 h-12 absolute"
             resizeMode='contain'
-          />
+          /> */}
         </TouchableOpacity>
       )}
     </Animatable.View>
