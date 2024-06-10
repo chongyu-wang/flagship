@@ -35,7 +35,7 @@ export default function App() {
   }, [curText]); // Re-run effect whenever curText changes
 
   if (!isLoading && isLoggedIn) {
-    return <Redirect href="/survey" />;
+    return <Redirect href="/home" />;
   }
 
   return (

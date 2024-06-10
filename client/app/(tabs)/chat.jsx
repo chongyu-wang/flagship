@@ -144,6 +144,7 @@ const Chat = () => {
 
           </View>
         ) : <TypingText/>}
+        
         {
         (!isPlaying && !isLoading) ? 
         (
