@@ -1,9 +1,12 @@
 import { Alert } from 'react-native';
 
 // Function to convert speech to text using the Flask backend server
+
+const SERVER_IP = '10.0.0.82'
 export const speechToText = async (audioUri: string) => {
+    console.log(audioUri);
     try {
-        const response = await fetch('http://10.0.0.161:3000/api/speech-to-text', {
+        const response = await fetch(`http://${SERVER_IP}:3000/api/speech-to-text`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -33,7 +36,7 @@ export const speechToText = async (audioUri: string) => {
 // Function to get a completion from ChatGPT using the transcribed text
 export const getCompletion = async (prompt: string) => {
     try {
-        const response = await fetch('http://10.0.0.161:3000/api/chat-completion', {
+        const response = await fetch(`http://${SERVER_IP}:3000/api/chat-completion`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -59,3 +62,29 @@ export const getCompletion = async (prompt: string) => {
         }
     }
 };
+
+
+export const fetchAudio = async (text: string) => {
+    console.log("fetching audio");
+    console.log(SERVER_IP);
+    try {
+      const response = await fetch(`http://${SERVER_IP}:3000/text_to_speech`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text }),
+      });
+
+      console.log("bbbbb");
+      console.log(response);
+
+      const responseData = await response.json();
+      const base64Audio = responseData.audio;
+
+      return base64Audio;
+
+    } catch (error) {
+      console.error('Error fetching audio:', error);
+    }
+  };

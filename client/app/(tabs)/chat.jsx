@@ -4,14 +4,12 @@ import { Audio } from 'expo-av';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../../components/CustomButton';
 import { Buffer } from 'buffer';
-import { speechToText, getCompletion } from '../../hooks/useApi';
+import { speechToText, getCompletion, fetchAudio } from '../../hooks/useApi';
+// import { fetchAudio } from '../../hooks/audioProcessing';
 import TypingText from '../../components/TypingText';
 import ChatTextInput from '../../components/ChatTextInput';
 // import ChatAnimation from '../../components/ChatAnimation';
 import LottieView from 'lottie-react-native';
-
-
-const SERVER_IP = '35.3.11.38';
 
 const Chat = () => {
   const [sound, setSound] = useState(null);
@@ -20,21 +18,11 @@ const Chat = () => {
   const [recording, setRecording] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const fetchAudio = async () => {
+  const getAudioResponse = async (text) => {
     setText('');
-    console.log(SERVER_IP);
     try {
       setIsLoading(true);
-      const response = await fetch(`http://${SERVER_IP}:3000/text_to_speech`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text }),
-      });
-
-      const responseData = await response.json();
-      const base64Audio = responseData.audio;
+      const base64Audio = await fetchAudio(text);
 
       playAudio(base64Audio);
     } catch (error) {
@@ -65,16 +53,22 @@ const Chat = () => {
 
   //added for real time speech to text
   const startRecording = async () => {
+    console.log("recording started");
     try {
       await Audio.requestPermissionsAsync();
+
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
 
+
       const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+
       setRecording(recording);
+
       await recording.startAsync();
+
     } catch (err) {
       console.error('Failed to start recording', err);
     }
@@ -84,13 +78,19 @@ const Chat = () => {
     setIsLoading(true);
     try {
       await recording.stopAndUnloadAsync();
+      console.log("A");
       const uri = recording.getURI();
+      console.log("B");
       setRecording(null);
+      console.log("C");
 
       const result = await speechToText(uri);
+      console.log("D");
       const completion = await getCompletion(result.text);
+      console.log("E");
 
       setText(completion.text);
+      console.log("F");
     } catch (error) {
       console.error('Failed to stop recording', error);
       Alert.alert('Error', 'Failed to process the recording');
@@ -109,50 +109,25 @@ const Chat = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      
       <SafeAreaView className="bg-primary h-full">
-        {!isPlaying ? (
-          <View className="w-full justify-center items-center min-h-[85vh] px-4">
-
-              {isLoading && (
-                  <Text className="text-white">Loading...</Text>
-              )}
-  
-              <TextInput
-                className="bg-black text-gray-400 p-4 rounded-xl mb-4 w-full h-40 border-2 border-gray-200"
-                placeholder="You are talking to Alan Watts. Say hi!!!"
-                placeholderTextColor="#7b7b8b"
-                value={text}
-                onChangeText={setText}
-                multiline={true}
-                numberOfLines={4}
-              />
-  
-            <CustomButton
-              title="Get Audio Response"
-              handlePress={fetchAudio}
-              containerStyles="w-3/5 mt-8"
-            />
-  
-          {/* SpeechToTextTest component here */}
-          <View style={styles.speechToTextContainer}>
+        {
+        (!isPlaying && !isLoading) ? 
+        (
+          <View>
+            <View style={styles.speechToTextContainer}>
             {recording ? (
               <Button title="Stop Recording" onPress={stopRecording} />
             ) : (
               <Button title="Start Recording" onPress={startRecording} />
             )}
+            </View>
+            <ChatTextInput
+              text={text}
+              setText={setText}
+              fetchAudio={() => getAudioResponse(text)}
+            />
           </View>
-
-          </View>
-        ) : <TypingText/>}
-        
-        {
-        (!isPlaying && !isLoading) ? 
-        (
-          <ChatTextInput
-            text={text}
-            setText={setText}
-            fetchAudio={fetchAudio}
-          />
         ) :
         isLoading ?
         (
@@ -162,7 +137,6 @@ const Chat = () => {
         <LottieView style={{flex: 1}} source={require("../../assets/lottie/VoiceChatAnimation.json")} autoPlay loop/>
         )
         }
-
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );
