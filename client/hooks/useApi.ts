@@ -2,7 +2,7 @@ import { Alert } from 'react-native';
 
 // Function to convert speech to text using the Flask backend server
 
-const SERVER_IP = '35.2.213.35'
+const SERVER_IP = '10.10.241.128'
 export const speechToText = async (audioUri: string) => {
     console.log(audioUri);
     try {
@@ -76,9 +76,6 @@ export const fetchAudio = async (text: string) => {
         body: JSON.stringify({ text }),
       });
 
-    //   console.log("bbbbb");
-    //   console.log(response);
-
       const responseData = await response.json();
       const base64Audio = responseData.audio;
 
@@ -88,3 +85,40 @@ export const fetchAudio = async (text: string) => {
       console.error('Error fetching audio:', error);
     }
   };
+
+export const sendAudio = async (uri: string): Promise<string | void> => {
+    if (uri) {
+      try {
+        const fileType = 'audio/mpeg';
+  
+        const formData = new FormData();
+        formData.append('file', {
+          uri: uri,
+          name: 'audio.mp3',
+          type: fileType
+        } as any);
+  
+        const fetchResponse = await fetch(`http://${SERVER_IP}:3000/api/speech-to-text`, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        if (!fetchResponse.ok) {
+          throw new Error(`HTTP error! status: ${fetchResponse.status}`);
+        }
+  
+        const data = await fetchResponse.json();
+        console.log(data.transcription);
+        return data.transcription;
+
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+      }
+    }
+};
+  

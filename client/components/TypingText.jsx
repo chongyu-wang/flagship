@@ -16,7 +16,7 @@ const TypingText = () => {
             clearInterval(interval); // Clear interval to prevent overlapping
           }, 2000);
     
-        }, curText === 0 ? 2000 : curText === 1 ? 3000 : 5000); // Change interval based on curText value
+        }, curText === 0 ? 3000 : curText === 1 ? 3000 : 3000); // Change interval based on curText value
     
         // Clear the interval on component unmount to avoid memory leaks
         return () => {
@@ -28,10 +28,10 @@ const TypingText = () => {
   return (
     <View className="w-full justify-center items-center min-h-[85vh] px-4">
         {curText === 0 ? 
-        (<TypeWriter typing={1} className="text-gray-100 text-4xl">...</TypeWriter>):
+        (<TypeWriter typing={1} className="text-gray-100">Hold the Screen to Chat.</TypeWriter>):
         curText == 1 ?
-        (<TypeWriter typing={1} className="text-gray-100 text-align-center text-4xl">......</TypeWriter>):
-        (<TypeWriter typing={1} className="text-gray-100 text-align-center text-4xl">.........</TypeWriter>)
+        (<TypeWriter typing={1} className="text-gray-100 text-align-center">Hold the Screen to Chat..</TypeWriter>):
+        (<TypeWriter typing={1} className="text-gray-100 text-align-center">Hold the Screen to Chat...</TypeWriter>)
         }
     </View>
   )

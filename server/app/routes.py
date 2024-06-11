@@ -71,6 +71,8 @@ def api_speech_to_text():
 
     file = request.files['file']
 
+    print("file", file)
+
     audio_file = io.BufferedReader(io.BytesIO(file.read()))
     
     print("request_file_type: ", type(audio_file))

@@ -4,7 +4,7 @@ import { Audio } from 'expo-av';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../../components/CustomButton';
 import { Buffer } from 'buffer';
-import { speechToText, getCompletion, fetchAudio } from '../../hooks/useApi';
+import { speechToText, getCompletion, fetchAudio, sendAudio } from '../../hooks/useApi';
 // import { fetchAudio } from '../../hooks/audioProcessing';
 import TypingText from '../../components/TypingText';
 import ChatTextInput from '../../components/ChatTextInput';
@@ -12,6 +12,7 @@ import ChatTextInput from '../../components/ChatTextInput';
 import LottieView from 'lottie-react-native';
 
 import {LogBox} from 'react-native';
+// import { get } from 'http';
 
 // Ignore log notification by message:
 LogBox.ignoreLogs(['Warning: ...']);
@@ -123,39 +124,13 @@ const Chat = () => {
       setRecording(null);
     
       if (uri) {
-        const fileType = 'audio/mpeg';
-        const response = await fetch(uri);
-        const blob = await response.blob();
-    
-        const formData = new FormData();
-        formData.append('file', {
-          uri: uri,
-          name: 'audio.mp3',
-          type: fileType
-        });
-    
-        fetch(`http://${SERVER_IP}:3000/api/speech-to-text`, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-        .then(response => response.json())
-        .then(data => {
-          console.log(data.transcription);
-          getAudioResponse(data.transcription);
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        })
-        .finally(() => {
-          // setIsLoading(false);
-        });
+        const audioResponse = await sendAudio(uri);
+        await getAudioResponse(audioResponse);
       }
     } catch (err) {
       console.error("ERROR", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -167,26 +142,14 @@ const Chat = () => {
         (!isPlaying && !isLoading && !isRecording) ? 
         (
           <View className="items-center justify-content">
-            {/* <View style={styles.speechToTextContainer}>
-            {recording ? (
-              <Button title="Stop Recording" onPress={stopRecording} />
-            ) : (
-              <Button title="Start Recording" onPress={startRecording} />
-            )}
-            </View> */}
-            {/* <ChatTextInput
-              text={text}
-              setText={setText}
-              fetchAudio={() => getAudioResponse(text)}
-            /> */}
-            <Text className="text-white">Hold the Screen to Chat</Text>
+            <TypingText />
           </View>
         ) :
         isRecording ?
          (<LottieView style={{flex: 1}} source={require("../../assets/lottie/RecordingAnimation.json")} autoPlay loop/>):
         isLoading ?
         (
-          <TypingText/>
+          <LottieView style={{flex: 1}} source={require("../../assets/lottie/ChatLoadingAnimation.json")} autoPlay loop/>
         ) :
         (
         <LottieView style={{flex: 1}} source={require("../../assets/lottie/VoiceChatAnimation.json")} autoPlay loop/>

@@ -98,7 +98,7 @@ def stream_audio_from_text(text):
         # "voice": "s3://voice-cloning-zero-shot/4b5693de-7825-494b-b239-7f8be077db11/original/manifest.json",
         # "voice": "s3://voice-cloning-zero-shot/be9e7cb8-47eb-4116-b522-7d01e859d538/original/manifest.json",
         # "voice": "s3://voice-cloning-zero-shot/6700c054-d804-494c-ba1c-2189e8c48809/original/manifest.json",
-        "voice": voices["Alan Watts"]["id"],
+        "voice": voices["Andrew Tate"]["id"],
         "output_format": "mp3"
     }
     headers = {
