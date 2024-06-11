@@ -46,6 +46,16 @@ const Chat = () => {
     const audioBuffer = Buffer.from(base64Audio, 'base64');
     const uri = `data:audio/mp3;base64,${base64Audio}`;
 
+    try {
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+        playsInSilentModeIOS: true,
+
+      })
+    } catch {
+      console.log("error setting");
+    }
+
     const { sound } = await Audio.Sound.createAsync(
        { uri },
        { shouldPlay: true }
@@ -91,6 +101,7 @@ const Chat = () => {
 
   const stopRecording = async () => {
     setIsLoading(true);
+  
     console.log("START RECORDING");
     try {
       await recording.stopAndUnloadAsync();
@@ -134,14 +145,6 @@ const Chat = () => {
       console.error("ERROR", err);
     }
   };
-
-  React.useEffect(() => {
-    return sound
-      ? () => {
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
