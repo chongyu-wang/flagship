@@ -56,7 +56,7 @@ Personalization: Adapt your responses to the user's preferences and needs. Remem
 '''
 
 messages = [
-    {"role": "system", "content": andrew_tate_system},
+    {"role": "system", "content": alan_watts_system},
     # {"role": "user", "content": "hello"}
 ]
 
