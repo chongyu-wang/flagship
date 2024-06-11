@@ -11,6 +11,16 @@ import ChatTextInput from '../../components/ChatTextInput';
 // import ChatAnimation from '../../components/ChatAnimation';
 import LottieView from 'lottie-react-native';
 
+import {LogBox} from 'react-native';
+
+// Ignore log notification by message:
+LogBox.ignoreLogs(['Warning: ...']);
+
+// Ignore all log notifications:
+LogBox.ignoreAllLogs();
+
+
+
 const SERVER_IP = '35.2.213.35';
 
 const Chat = () => {
@@ -20,6 +30,7 @@ const Chat = () => {
   const [recording, setRecording] = useState(null);
   const [audioUri, setAudioUri] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -74,6 +85,7 @@ const Chat = () => {
 
   //added for real time speech to text
   const startRecording = async () => {
+    setIsRecording(true);
     console.log("recording started");
     try {
       await Audio.requestPermissionsAsync();
@@ -100,6 +112,7 @@ const Chat = () => {
   };
 
   const stopRecording = async () => {
+    setIsRecording(false);
     setIsLoading(true);
   
     console.log("START RECORDING");
@@ -147,27 +160,30 @@ const Chat = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} onPressIn={startRecording} onPressOut={stopRecording}>
       
       <SafeAreaView className="bg-primary h-full">
         {
-        (!isPlaying && !isLoading) ? 
+        (!isPlaying && !isLoading && !isRecording) ? 
         (
-          <View>
-            <View style={styles.speechToTextContainer}>
+          <View className="items-center justify-content">
+            {/* <View style={styles.speechToTextContainer}>
             {recording ? (
               <Button title="Stop Recording" onPress={stopRecording} />
             ) : (
               <Button title="Start Recording" onPress={startRecording} />
             )}
-            </View>
-            <ChatTextInput
+            </View> */}
+            {/* <ChatTextInput
               text={text}
               setText={setText}
               fetchAudio={() => getAudioResponse(text)}
-            />
+            /> */}
+            <Text className="text-white">Hold the Screen to Chat</Text>
           </View>
         ) :
+        isRecording ?
+         (<LottieView style={{flex: 1}} source={require("../../assets/lottie/RecordingAnimation.json")} autoPlay loop/>):
         isLoading ?
         (
           <TypingText/>

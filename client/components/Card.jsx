@@ -32,7 +32,7 @@ video: {title,
                         </Text>
                         <Text
                         className="text-white font-psemibold text-sm">
-                            {prompt}
+                            {prompt.substr(0,40) + "..."}
                         </Text>
                         <Text
                         className="text-xs text-gray-100 font-pregular"

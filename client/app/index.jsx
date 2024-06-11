@@ -40,12 +40,12 @@ export default function App() {
 
   return (
     <SafeAreaView className="bg-primary h-full">
-      <LottieView 
+      {/* <LottieView 
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: -1 }}
         source={require("../assets/lottie/BackgroundAnimation.json")} 
         autoPlay 
         loop 
-      />
+      /> */}
       <ScrollView contentContainerStyle={{ height: '100%' }}>
         <View
         className="w-full justify-center items-center min-h-[85vh] px-4">

@@ -9,12 +9,12 @@ export const questionnaireQuestions = [
     "Describe your voice for us (e.g. tone, cadence, acccent, etc):",
     "Have you faced any major challenges or obstacles, and how did you overcome them?",
     "What was a pivotal moment or turning point in your career or personal life?",
-    "Can you tell me about a time when you had to make a difficult decision?",
-    "What are some of the happiest moments you’ve experienced?",
-    "Have there been any life-changing events that shaped who you are today?",
-    "What important lessons have you learned from your relationships and interactions with others?",
-    "How have your beliefs or values evolved over time, and what influenced these changes?",
-    "Can you share a story about a person who had a significant impact on your life?"
+    // "Can you tell me about a time when you had to make a difficult decision?",
+    // "What are some of the happiest moments you’ve experienced?",
+    // "Have there been any life-changing events that shaped who you are today?",
+    // "What important lessons have you learned from your relationships and interactions with others?",
+    // "How have your beliefs or values evolved over time, and what influenced these changes?",
+    // "Can you share a story about a person who had a significant impact on your life?"
 ];
 
 export const registerAnswer = (newAnswer, setAnswers) => {

@@ -57,6 +57,18 @@ export default function Survey() {
 
     return (
         <SafeAreaView className="bg-primary h-full">
+            <LottieView 
+            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: -1 }}
+            source={require("../../assets/lottie/BackgroundAnimation.json")} 
+            autoPlay 
+            loop 
+            />
+            <ProgressDisplay
+                firstCheckpointCompletion={surveyPhase === 1 ? userDataQuestions.length : answers.length}
+                firstCheckpointMax={userDataQuestions.length}
+                secondCheckpointCompletion={surveyPhase === 1 ? answers.length : 0}
+                secondCheckpointMax={questionnaireQuestions.length}
+            />
             <View className="items-center mt-8">
                 <Text className="text-2xl font-bold text-white">Tell us about yourself!</Text>
             </View>
@@ -70,13 +82,6 @@ export default function Survey() {
                 onSubmit={onSubmit}
                 displayDate={surveyPhase === 0 && answers.length === 2}
                 surveyPhase={surveyPhase}
-            />
-
-            <ProgressDisplay
-                firstCheckpointCompletion={surveyPhase === 1 ? userDataQuestions.length : answers.length}
-                firstCheckpointMax={userDataQuestions.length}
-                secondCheckpointCompletion={surveyPhase === 1 ? answers.length : 0}
-                secondCheckpointMax={questionnaireQuestions.length}
             />
         </SafeAreaView>
     );

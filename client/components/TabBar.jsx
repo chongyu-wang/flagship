@@ -5,9 +5,9 @@ import TabBarButton from './TabBarButton';
 
 const TabBar = ({ state, descriptors, navigation }) => {
 
-
-    const primaryColor = '#F6F6F6';
-    const greyColor = '#777777';
+    
+    const primaryColor = '#f12a42';
+    const greyColor = '#F6F6F6';
   return (
     <View style={styles.tabbar}>
       {state.routes.map((route, index) => {
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: '#191919',
+        backgroundColor: '#181818',
         marginHorizontal: 20,
         paddingVertical: 15,
         borderRadius: 25,
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
         shadowOffset: {width: 0, height: 10},
         shadowRadius: 10,
         shadowOpacity: 0.2,
-        opacity: 0.9,
+        opacity: 0.95,
     }
 })
 
