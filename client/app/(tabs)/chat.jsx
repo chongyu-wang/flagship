@@ -11,12 +11,23 @@ import ChatTextInput from '../../components/ChatTextInput';
 // import ChatAnimation from '../../components/ChatAnimation';
 import LottieView from 'lottie-react-native';
 
+const SERVER_IP = '35.2.213.35';
+
 const Chat = () => {
   const [sound, setSound] = useState(null);
   const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [recording, setRecording] = useState(null);
+  const [audioUri, setAudioUri] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (recording) {
+        recording.stopAndUnloadAsync();
+      }
+    };
+  }, [recording]);
 
   const getAudioResponse = async (text) => {
     setText('');
@@ -65,9 +76,13 @@ const Chat = () => {
 
       const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
 
+      console.log(recording);
+
+      console.log("*********");
+
       setRecording(recording);
 
-      await recording.startAsync();
+      // await recording.startAsync();
 
     } catch (err) {
       console.error('Failed to start recording', err);
@@ -76,26 +91,47 @@ const Chat = () => {
 
   const stopRecording = async () => {
     setIsLoading(true);
+    console.log("START RECORDING");
     try {
       await recording.stopAndUnloadAsync();
-      console.log("A");
       const uri = recording.getURI();
-      console.log("B");
+      setAudioUri(uri);
       setRecording(null);
-      console.log("C");
-
-      const result = await speechToText(uri);
-      console.log("D");
-      const completion = await getCompletion(result.text);
-      console.log("E");
-
-      setText(completion.text);
-      console.log("F");
-    } catch (error) {
-      console.error('Failed to stop recording', error);
-      Alert.alert('Error', 'Failed to process the recording');
-    } finally {
-      setIsLoading(false);
+    
+      if (uri) {
+        const fileType = 'audio/mpeg';
+        const response = await fetch(uri);
+        const blob = await response.blob();
+    
+        const formData = new FormData();
+        formData.append('file', {
+          uri: uri,
+          name: 'audio.mp3',
+          type: fileType
+        });
+    
+        fetch(`http://${SERVER_IP}:3000/api/speech-to-text`, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data.transcription);
+          getAudioResponse(data.transcription);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        })
+        .finally(() => {
+          // setIsLoading(false);
+        });
+      }
+    } catch (err) {
+      console.error("ERROR", err);
     }
   };
 

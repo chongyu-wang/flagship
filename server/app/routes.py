@@ -5,8 +5,26 @@ from .controllers.audio_controller import process_audio_controller, text_to_spee
 from .controllers.question_controller import generate_questions_controller
 from .controllers.conversation_controller import mimic_conversation_controller, get_gpt_response
 import logging
+from openai import OpenAI
+from dotenv import load_dotenv
+import os
+import io
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Get API key from environment variable
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 main = Blueprint('main', __name__)
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+audio_file_path = os.path.join(current_dir, 'Tate_30_Seconds.mp3')
+
+print(audio_file_path)
 
 @main.route('/process_audio', methods=['POST'])
 def handle_audio():
@@ -45,18 +63,54 @@ def handle_text_to_speech():
 
 @main.route('/api/speech-to-text', methods=['POST'])
 def api_speech_to_text():
-    logging.debug('Received request for speech-to-text')
-    audio_url = request.json.get('audio_url')
-    logging.debug(f'Audio URL: {audio_url}')
-    if not audio_url:
-        logging.error('No audio URL provided')
-        return jsonify({'error': 'No audio URL provided'}), 400
+    if 'file' not in request.files:
+        return 'No file part', 400
+    
+    audio_file2 = open(audio_file_path, "rb")
+    # print("audio_file_type: ", type(audio_file))
 
-    try:
-        result = speech_to_text(audio_url)
-        logging.debug(f'Result: {result}')
-        return jsonify(result)
-    except Exception as e:
-        logging.error(f'Error processing audio: {e}')
-        return jsonify({'error': str(e)}), 500
+    file = request.files['file']
+
+    audio_file = io.BufferedReader(io.BytesIO(file.read()))
+    
+    print("request_file_type: ", type(audio_file))
+    print('Received file:', file.filename)
+    print(audio_file)
+
+    file_type = "m4a"
+    file_buffered_reader = io.BufferedReader(io.BytesIO(audio_file.read()))
+    file_bytes = file_buffered_reader.read()  # Read the entire content into bytes
+
+    content_type="audio/m4a"
+
+    transcription = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=("temp." + file_type, file_bytes, content_type),
+        response_format="text"
+        
+        )
+
+    print(transcription)
+    return jsonify({'transcription': transcription}), 200
+
+    # Process the file as needed
+    # For example, save it or pass it to a speech-to-text service
+
+    # return jsonify({'message': 'File received successfully'}), 200
+
+
+    # logging.debug('Received request for speech-to-text')
+    # audio_url = request.json.get('audio_url')
+    # logging.debug(f'Audio URL: {audio_url}')
+    # if not audio_url:
+    #     logging.error('No audio URL provided')
+    #     return jsonify({'error': 'No audio URL provided'}), 400
+
+    # try:
+    #     result = speech_to_text(audio_url)
+    #     logging.debug(f'Result: {result}')
+    #     return jsonify(result)
+    # except Exception as e:
+    #     logging.error(f'Error processing audio: {e}')
+    #     return jsonify({'error': str(e)}), 500
 

@@ -2,7 +2,7 @@ import { Alert } from 'react-native';
 
 // Function to convert speech to text using the Flask backend server
 
-const SERVER_IP = '10.0.0.82'
+const SERVER_IP = '35.2.213.35'
 export const speechToText = async (audioUri: string) => {
     console.log(audioUri);
     try {
@@ -76,8 +76,8 @@ export const fetchAudio = async (text: string) => {
         body: JSON.stringify({ text }),
       });
 
-      console.log("bbbbb");
-      console.log(response);
+    //   console.log("bbbbb");
+    //   console.log(response);
 
       const responseData = await response.json();
       const base64Audio = responseData.audio;
