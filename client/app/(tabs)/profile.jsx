@@ -17,16 +17,16 @@ const Profile = () => {
     };
     const fetchVoiceNames = async () => {
       const result = await getVoiceNames();
+      console.log(result)
       setVoiceNames(result);
     }
     fetchUser();
     fetchVoiceNames();
+
   }, []);
 
   const handleNamePress = async(name) => {
-    console.log("aaaaa");
     await switchUserVoiceSystem(name);
-    console.log("bbbbb");
     setCurrentVoice(name);
   }
 
@@ -37,9 +37,9 @@ const Profile = () => {
       <AntDesign name="user" size={64} color={"#A9A9A9"} classname="mb-2"/>
       <Text className="text-slate-300 text-xl">{user}</Text>
       <Text className="text-slate-300 my-8">Current voice System: {currentVoice} </Text>
-      {voiceNames.map((name, index) => (
-        <TouchableOpacity key={index} onPress={() => handleNamePress(name)} className="my-2 border-2 border-slate-500 rounded-3xl">
-          <Text className="text-slate-500 my-2 mx-2">{name}</Text>
+      {voiceNames.map(voice => (
+        <TouchableOpacity key={voice.id} onPress={() => handleNamePress(voice.voicename)} className="my-2 border-2 border-slate-500 rounded-3xl">
+          <Text className="text-slate-500 my-2 mx-2">{voice.voicename}</Text>
         </TouchableOpacity>
       ))}
     </SafeAreaView>
