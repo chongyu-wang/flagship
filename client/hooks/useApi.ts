@@ -2,7 +2,66 @@ import { Alert } from 'react-native';
 
 // Function to convert speech to text using the Flask backend server
 
-const SERVER_IP = '10.10.241.128'
+const SERVER_IP = '35.3.11.38'
+
+export const registerUserToBackend = async(username : string, email: string) => {
+  console.log("registering user with username: ", username);
+  try {
+    const response = await fetch(`http://${SERVER_IP}:3000/api/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username: username, email: email})
+    });
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      throw new Error(errorResponse.error || 'An error occured');
+    }
+  } catch (error: any) {
+    console.log(error);
+  }
+}
+
+export const switchUserVoiceSystem = async( voiceName: string) => {
+  console.log("switching voice to: ", voiceName);
+  try {
+    const response = await fetch(`http://${SERVER_IP}:3000/api/switch_chat/`,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ voice_name: voiceName})
+    });
+
+    console.log("gggggggggggggggggggggggggggg");
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      throw new Error(errorResponse.error || 'An error occured');
+    }
+  } catch (error: any) {
+    console.log(error);
+  }
+}
+
+export const getVoiceNames = async() => {
+  console.log("getting voice names");
+  try {
+    const response = await fetch(`http://${SERVER_IP}:3000/api/get_voices`);
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      throw new Error(errorResponse.error || 'An error occurred');
+    }
+
+    const result = await response.json()
+    return result.data;
+  } catch (error: any) {
+    console.log(error);
+  }
+}
+
 export const speechToText = async (audioUri: string) => {
     console.log(audioUri);
     try {
@@ -87,6 +146,7 @@ export const fetchAudio = async (text: string) => {
   };
 
 export const sendAudio = async (uri: string): Promise<string | void> => {
+  console.log("aaaaa");
     if (uri) {
       try {
         const fileType = 'audio/mpeg';

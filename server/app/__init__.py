@@ -3,6 +3,7 @@ import sqlite3
 
 def create_app():
     app = Flask(__name__)
+    app.secret_key = "secret"
     
     def initialize_database():
         with sqlite3.connect('clone.ly.db') as conn:

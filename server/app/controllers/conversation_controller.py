@@ -5,7 +5,8 @@ def mimic_conversation_controller(conversation_data):
     response = openai_mimic_conversation(conversation_data)
     return response
 
-def get_gpt_response(text_data):
-    return get_chatgpt_response(text_data)
+def get_gpt_response(text_data, username, system_content):
+    res =  get_chatgpt_response(text_data, username, system_content)
+    return res
 
 

@@ -1,6 +1,8 @@
 import requests
 import os
 from dotenv import load_dotenv
+import sqlite3
+import json
 
 load_dotenv()
 
@@ -45,6 +47,14 @@ voices = {
   }
 }
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(base_dir, '../db/systems.db')
+
+def get_db_connection():
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    return conn
+
 
 
 def list_voices():
@@ -58,6 +68,15 @@ def list_voices():
     response = requests.get(url, headers=headers)
 
     print(response.text)
+
+    res = {"data": []}
+
+    for r in dict(response).keys():
+        res["data"].append(r)
+
+    return res
+    
+
 
 
 def create_instant_voice_clone():
@@ -88,17 +107,12 @@ def create_instant_voice_clone():
 
     print(response.text)
 
-def stream_audio_from_text(text):
+def stream_audio_from_text(text, voice_id):
     url = "https://api.play.ht/api/v2/tts/stream"
 
     payload = {
         "text": text,
-        # "voice": "s3://voice-cloning-zero-shot/d9ff78ba-d016-47f6-b0ef-dd630f59414e/female-cs/manifest.json",
-        # "voice": "s3://voice-cloning-zero-shot/76e35797-7bb5-48e6-bff8-3e2b0e41b7d6/enhanced/manifest.json",
-        # "voice": "s3://voice-cloning-zero-shot/4b5693de-7825-494b-b239-7f8be077db11/original/manifest.json",
-        # "voice": "s3://voice-cloning-zero-shot/be9e7cb8-47eb-4116-b522-7d01e859d538/original/manifest.json",
-        # "voice": "s3://voice-cloning-zero-shot/6700c054-d804-494c-ba1c-2189e8c48809/original/manifest.json",
-        "voice": voices["Andrew Tate"]["id"],
+        "voice": voice_id,
         "output_format": "mp3"
     }
     headers = {

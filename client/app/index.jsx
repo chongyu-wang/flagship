@@ -3,36 +3,27 @@ import { StatusBar } from 'expo-status-bar';
 import { Text, View, Image, ScrollView } from 'react-native';
 import { Redirect, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import TypeWriter from 'react-native-typewriter';
 import { images } from '../constants';
 import CustomButton from '../components/CustomButton';
 import { useGlobalContext } from '../context/GlobalProvider';
+import TypingAnimation from '../components/TypingAnimation';
+import { registerUserToBackend } from '../hooks/useApi';
 import LottieView from 'lottie-react-native';
 
 export default function App() {
-  const { isLoading, isLoggedIn } = useGlobalContext();
-
-  const [curText, setCurText] = useState(0);
+  const { isLoading, isLoggedIn, user } = useGlobalContext();
 
   useEffect(() => {
-    let timeoutId;
-    const interval = setInterval(() => {
-      setCurText((prevText) => (prevText === 0 ? 1 : prevText === 1 ? 2 : 0));
-
-      clearTimeout(timeoutId);
-
-      timeoutId = setTimeout(() => {
-        clearInterval(interval); // Clear interval to prevent overlapping
-      }, 2000);
-
-    }, curText === 0 ? 2000 : curText === 1 ? 3000 : 5000); // Change interval based on curText value
-
-    // Clear the interval on component unmount to avoid memory leaks
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timeoutId);
+    const checkUser = async () => {
+      if (!isLoading && isLoggedIn && user.username && user.email) {
+  
+        await registerUserToBackend(user.username, user.email);
+        console.log("registering user");
+      }
     };
-  }, [curText]); // Re-run effect whenever curText changes
+    checkUser();
+  }, [isLoading, isLoggedIn, user]);
+  
 
   if (!isLoading && isLoggedIn) {
     return <Redirect href="/home" />;
@@ -70,13 +61,7 @@ export default function App() {
             Clone.ly
           </Text>
 
-          {curText === 0 ? 
-            (<TypeWriter typing={1} className="text-gray-100">Keep Voices Close.</TypeWriter>):
-          curText == 1 ?
-            (<TypeWriter typing={1} className="text-gray-100 text-align-center">Your Digital Legacy.</TypeWriter>):
-          (<TypeWriter typing={1} className="text-gray-100 text-align-center">Preserve Memories, Share Stories, Forever Together.</TypeWriter>)
-          }
-
+          <TypingAnimation/>
 
           <CustomButton
             title="Continue with Email"

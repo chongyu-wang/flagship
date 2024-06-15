@@ -22,7 +22,7 @@ LogBox.ignoreAllLogs();
 
 
 
-const SERVER_IP = '35.2.213.35';
+// const SERVER_IP = '35.2.213.35';
 
 const Chat = () => {
   const [sound, setSound] = useState(null);
@@ -159,37 +159,5 @@ const Chat = () => {
     </TouchableWithoutFeedback>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#1a1a1a',
-  },
-  innerContainer: {
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '85vh',
-    paddingHorizontal: 16,
-  },
-  loadingText: {
-    color: 'white',
-  },
-  textInput: {
-    backgroundColor: '#000',
-    color: '#7b7b8b',
-    padding: 16,
-    borderRadius: 10,
-    marginBottom: 16,
-    width: '100%',
-    height: 160,
-    borderWidth: 2,
-    borderColor: '#ccc',
-  },
-  speechToTextContainer: {
-    marginTop: 20,
-    width: '100%',
-  },
-});
 
 export default Chat;

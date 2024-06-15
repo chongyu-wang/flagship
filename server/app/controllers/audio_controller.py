@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 # Use relative imports
 # from speech2text.speech_to_text import process_audio as google_process_audio
 from speech2text.speech_to_text import speech_to_text
-from text2speech.text_to_speech import stream_audio_from_text
+from text2speech.text_to_speech import stream_audio_from_text, list_voices
 
 # def save_audio_file_to_gcs(audio_data, bucket_name, destination_blob_name):
 #     storage_client = storage.Client()
@@ -34,8 +34,12 @@ def process_audio_controller(audio_data):
 #     return text
 
 
-def text_to_speech_controller(text_data):
-    return stream_audio_from_text(text_data)
+def text_to_speech_controller(text_data, voice_id):
+
+    return stream_audio_from_text(text_data, voice_id)
+
+def list_voice_names():
+    return list_voices()
 
 # test = text_to_speech_controller("hello this is a test audio!!!!!")
 
