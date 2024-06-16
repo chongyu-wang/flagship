@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import boto3
 
 class Database:
     '''
@@ -46,6 +47,40 @@ class Database:
         connection.row_factory = sqlite3.Row
         return connection
     
+    def get_user_by_username(self, username):
+        connection = self.get_db()
+        user = connection.execute(
+            "SELECT username, id FROM users WHERE username = ?",
+            (username, )
+        ).fetchone()
+
+        connection.close()
+
+        if user == None:
+            return self.add_user_by_username(username)
+        
+        return dict(user)
+
+    def add_user_by_username(self, username):
+        connection = self.get_db()
+        connection.execute(
+            "INSERT INTO users (username) VALUES (?)",
+            (username, )
+        )
+
+        connection.commit()
+
+        newUser = connection.execute(
+            "SELECT username, id FROM users WHERE username = ?",
+            (username, )
+        ).fetchone()
+
+        connection.close()
+
+        return dict(newUser)
+
+
+    
     def get_users_current_voice_system(self, username):
         connection = self.get_db()
         voice_system = connection.execute(
@@ -60,6 +95,9 @@ class Database:
         ).fetchone()
 
         connection.close()
+
+        if voice_system == None:
+            return self.insert_users_current_voice_system(username)
 
         voice_system = dict(voice_system)
         return voice_system
@@ -82,16 +120,16 @@ class Database:
         connection = self.get_db()
         connection.execute(
             '''
-            INSERT INTO users (username, voice_id, voice_system) VALUES (?, 
-            (SELECT voice_id FROM voices LIMIT 1),
-            (SELECT content FROM systems LIMIT 1))
+            INSERT INTO users_current_voice_system (user_id, voice_system_id) VALUES ( 
+            (SELECT id FROM users WHERE username = ? LIMIT 1),
+            (SELECT id FROM voice_systems LIMIT 1))
             ''',
             (username, )
         )
         connection.commit()
         connection.close()
 
-        self.get_users_current_voice_system(username)
+        return self.get_users_current_voice_system(username)
     
     def list_voices(self, username = None):
         connection = self.get_db()
@@ -155,8 +193,23 @@ class Database:
         connection = self.get_db()
         connection.execute(
             "UPDATE voice_systems SET system_prompt = ? WHERE voicename = ?",
-            ("You are Joe Biden. Talk like Joe Biden. Use languages such as 'fuck' 'shit' 'fucking' in almost every sentence. Keep your responses 2-3 sentences max.", "Joe Biden")
+            ("You are Joe Biden. Talk like Joe Biden. Keep your responses 2-3 sentences max.", "Joe Biden")
         )
+        connection.commit()
+        connection.close()
+
+    def insert_db(self):
+        connection = self.get_db()
+        connection.execute(
+            "INSERT INTO voice_systems SET (voicename, system_prompt, voice_url, voice_engine, gender) "
+            "VALUES (?, ?, ?, ?, ?)",
+
+        )
+
+
+    def delete_table(self):
+        connection = self.get_db()
+        connection.execute("DELETE FROM users_current_voice_system;")
         connection.commit()
         connection.close()
 
@@ -166,7 +219,7 @@ class Database:
     
 if __name__ == "__main__":
     database = Database()
-    database.update_db()
+    # database.update_db()
     # database.list_all_messages()
     # database.create_messages_table()
     # print(database.get_users_current_voice_system("Charlie123"))

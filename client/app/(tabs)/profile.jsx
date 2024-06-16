@@ -2,18 +2,22 @@ import { View, Text, TouchableOpacity, FlatList } from 'react-native'
 import React, {useEffect, useState} from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import { getCurrentUser, signIn } from '../../lib/appwrite';
+import { getCurrentUser, signIn, signOut } from '../../lib/appwrite';
+import { useGlobalContext } from '../../context/GlobalProvider';
 import { getVoiceNames, switchUserVoiceSystem } from '../../hooks/useApi';
+import { Link, router } from 'expo-router';
 
 const Profile = () => {
-  const [user, setUser] = useState("");
-  const [currentVoice, setCurrentVoice] = useState("Andrew Tate");
+  const [curUser, setCurUser] = useState("");
+  const [currentVoice, setCurrentVoice] = useState("");
   const [voiceNames, setVoiceNames] = useState([]);
+
+  const { user, setUser, setIsLoggedIn } = useGlobalContext();
 
   useEffect(() => {
     const fetchUser = async () => {
       const result = await getCurrentUser();
-      setUser(result.username);
+      setCurUser(result.username);
     };
     const fetchVoiceNames = async () => {
       const result = await getVoiceNames();
@@ -31,11 +35,25 @@ const Profile = () => {
   }
 
 
+  const logOut = async() => {
+    await signOut();
+    setUser(null);
+    setIsLoggedIn(false);
+
+    router.replace("/sign-in");
+  }
+
+
 
   return (
     <SafeAreaView className="bg-primary h-full justify-center items-center">
+      <TouchableOpacity className="mb-8" onPress={logOut}>
+        <Text className="text-white">
+          Sign Out
+        </Text>
+      </TouchableOpacity>
       <AntDesign name="user" size={64} color={"#A9A9A9"} classname="mb-2"/>
-      <Text className="text-slate-300 text-xl">{user}</Text>
+      <Text className="text-slate-300 text-xl">{curUser}</Text>
 
       <Text className="text-slate-300 my-8">Current voice System: {currentVoice} </Text>
       {voiceNames.map(voice => (

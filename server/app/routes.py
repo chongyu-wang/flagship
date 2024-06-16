@@ -30,6 +30,10 @@ def handle_login():
     user_data = request.json
     username = user_data.get("username")
     email = user_data.get("email")
+    print("*"*180)
+    print(username)
+    print(email)
+    print("*"*180)
     if username is None:
         print("error username not provided")
         return 'error username not provided', 400
@@ -37,10 +41,15 @@ def handle_login():
     session['email'] = email
     print("successfully logged user to backend")
 
+    database.get_user_by_username(username)
+    
     user_chat_system = database.get_users_current_voice_system(username)
+    print(user_chat_system)
 
     if user_chat_system is None:
         user_chat_system = database.insert_users_current_voice_system(username)
+
+    print("c")
 
     session['chat_system'] = user_chat_system
 
