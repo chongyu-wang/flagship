@@ -151,7 +151,14 @@ class Database:
         connection.commit()
         connection.close()
 
-
+    def update_db(self):
+        connection = self.get_db()
+        connection.execute(
+            "UPDATE voice_systems SET system_prompt = ? WHERE voicename = ?",
+            ("You are Joe Biden. Talk like Joe Biden. Use languages such as 'fuck' 'shit' 'fucking' in almost every sentence. Keep your responses 2-3 sentences max.", "Joe Biden")
+        )
+        connection.commit()
+        connection.close()
 
 
 
@@ -159,6 +166,7 @@ class Database:
     
 if __name__ == "__main__":
     database = Database()
+    database.update_db()
     # database.list_all_messages()
     # database.create_messages_table()
     # print(database.get_users_current_voice_system("Charlie123"))

@@ -30,7 +30,7 @@ const TypingText = () => {
         {curText === 0 ? 
         (<TypeWriter typing={1} className="text-gray-100">Hold the Screen to Chat.</TypeWriter>):
         curText == 1 ?
-        (<TypeWriter typing={1} className="text-gray-100 text-align-center">Hold the Screen to Chat..</TypeWriter>):
+        (<TypeWriter typing={1} className="text-gray-100 text-align-center">Release When Done Talking..</TypeWriter>):
         (<TypeWriter typing={1} className="text-gray-100 text-align-center">Hold the Screen to Chat...</TypeWriter>)
         }
     </View>

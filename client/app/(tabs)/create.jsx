@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TextInput, Button, TouchableOpacity, TouchableWithoutFeedback, Image, Keyboard } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -22,13 +22,16 @@ const Create = () => {
     });
 
     if (!result.cancelled) {
+      console.log(result);
       setImage(result.uri);
+      console.log(image);
     }
   };
 
   const onSubmit = () => {
     // Handle form submission
-    console.log({ title, description, date, image });
+    // console.log({ title, description, date, image });
+    console.log("poop");
   };
 
   return (
@@ -38,6 +41,7 @@ const Create = () => {
           go home
         </Text>
       </TouchableOpacity> */}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View>
       <View className="mb-4 mt-16">
         <Text className="text-white text-lg mb-2">Event Title</Text>
@@ -95,6 +99,7 @@ const Create = () => {
             containerStyles="w-3/5 mt-8"
           />
       </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };

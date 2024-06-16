@@ -10,6 +10,8 @@ import TypingText from '../../components/TypingText';
 import ChatTextInput from '../../components/ChatTextInput';
 // import ChatAnimation from '../../components/ChatAnimation';
 import LottieView from 'lottie-react-native';
+import ChatBottomList from '../../components/ChatBottomList';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import {LogBox} from 'react-native';
 // import { get } from 'http';
@@ -135,26 +137,27 @@ const Chat = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} onPressIn={startRecording} onPressOut={stopRecording}>
-      
+    <TouchableWithoutFeedback onPressIn={startRecording} onPressOut={stopRecording}>
       <SafeAreaView className="bg-primary h-full">
-        {
-        (!isPlaying && !isLoading && !isRecording) ? 
-        (
-          <View className="items-center justify-content">
+          {
+          (!isPlaying && !isLoading && !isRecording) ? 
+          (
             <TypingText />
-          </View>
-        ) :
-        isRecording ?
-         (<LottieView style={{flex: 1}} source={require("../../assets/lottie/RecordingAnimation.json")} autoPlay loop/>):
-        isLoading ?
-        (
-          <LottieView style={{flex: 1}} source={require("../../assets/lottie/ChatLoadingAnimation.json")} autoPlay loop/>
-        ) :
-        (
-        <LottieView style={{flex: 1}} source={require("../../assets/lottie/VoiceChatAnimation.json")} autoPlay loop/>
-        )
-        }
+          ) :
+          isRecording ?
+          (
+            <View style={{justifyContent: "center", alignItems: "center", flex:1}}>
+            <LottieView style={{flex: 1, width: "70%" , height: "70%"}} source={require("../../assets/lottie/RecordingAnimation.json")} autoPlay loop/>
+            </View>
+          ):
+          isLoading ?
+          (
+            <LottieView style={{flex: 1}} source={require("../../assets/lottie/ChatLoadingAnimation.json")} autoPlay loop/>
+          ) :
+          (
+            <LottieView style={{flex: 1}} source={require("../../assets/lottie/VoiceChatAnimation.json")} autoPlay loop/>
+          )
+          }
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );
