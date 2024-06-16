@@ -5,6 +5,8 @@ from .controllers.audio_controller import process_audio_controller, text_to_spee
 from .controllers.question_controller import generate_questions_controller
 from .controllers.conversation_controller import mimic_conversation_controller, get_gpt_response
 from db import Database
+from utils import upload_to_s3
+import base64
 import logging
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -131,20 +133,18 @@ def api_speech_to_text():
     print(transcription)
     return jsonify({'transcription': transcription}), 200
 
+@main.route('/api/upload-image', methods=['POST'])
+def upload_image():
+    try:
+        data = request.json
+        file_name = data['file_name']
+        file_type = data['file_type']
+        file_content = data['file_content']  # base64 encoded file content
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        file_url = upload_to_s3(file_name, file_type, file_content)
+        return jsonify({'file_url': file_url}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @main.route('/process_audio', methods=['POST'])
 def handle_audio():

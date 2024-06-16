@@ -2,7 +2,7 @@ import { Alert } from 'react-native';
 
 // Function to convert speech to text using the Flask backend server
 
-const SERVER_IP = '35.1.84.115'
+const SERVER_IP = '35.1.63.103'
 
 export const registerUserToBackend = async(username : string, email: string) => {
   console.log("registering user with username: ", username);
