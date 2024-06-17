@@ -12,6 +12,11 @@ def fetch_and_print_data(db_name):
     # Iterate through the tables and print their content
     for table_name in tables:
         table_name = table_name[0]
+        
+        # Skip the 'messages' table
+        if table_name == 'messages':
+            continue
+        
         print(f"TABLE NAME {table_name}")
 
         # Fetch the column names for the table
@@ -38,3 +43,4 @@ if __name__ == "__main__":
 
     # Fetch and print data from the database
     fetch_and_print_data(db_name)
+

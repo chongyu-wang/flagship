@@ -124,6 +124,51 @@ def stream_audio_from_text(text, voice_id):
 
     response = requests.post(url, json=payload, headers=headers)
 
+    # print(response.content)
+
+
+    return response.content
+
+def list_voices_from_11labs():
+    url = "https://api.elevenlabs.io/v1/voices"
+
+    headers = {"xi-api-key": "sk_442f43baa26c76f3860f0c8569d7a46c890b34139a3d117f"}
+
+    response = requests.request("GET", url, headers=headers)
+
+    text_data = response.text
+
+    json_text = json.loads(text_data)
+    json_voices = json_text["voices"]
+
+    cloned_voices = [voice for voice in json_voices if voice["category"] == "cloned"]
+
+    for voice in cloned_voices:
+        print("name: ", voice["name"])
+        print("voice_id: ", voice["voice_id"])
+        print("\n")
+
+def stream_audio_from_11labs(text):
+    url = "https://api.elevenlabs.io/v1/text-to-speech/qDjKSZnlqTWWtjPnilLS"
+
+    payload = {
+        "text": text,
+        "voice_settings": {
+            "stability": 0.5,
+            "similarity_boost": 0.7,
+            "style": 0.3,
+            "use_speaker_boost": True
+        }
+    }
+    headers = {
+        "xi-api-key": "sk_442f43baa26c76f3860f0c8569d7a46c890b34139a3d117f",
+        "Content-Type": "application/json"
+    }
+
+    response = requests.request("POST", url, json=payload, headers=headers)
+
+    # print(response.content)
+
     # output_file_path = "output.mp3"
     # with open(output_file_path, 'wb') as audio_file:
     #     audio_file.write(response.content)
@@ -132,10 +177,6 @@ def stream_audio_from_text(text, voice_id):
 
     return response.content
 
-# streamed_audio = stream_audio_from_text("hello this is a test audio")
-
-# print(type(streamed_audio))
-
 
 
 
@@ -143,3 +184,6 @@ def stream_audio_from_text(text, voice_id):
 def text_to_speech(text_data):
     # Implement text-to-speech using Play.ht API
     pass
+
+if __name__ == "__main__":
+    list_voices_from_11labs()

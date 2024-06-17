@@ -10,6 +10,8 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 # Initialize the OpenAI API key
 openai.api_key = OPENAI_API_KEY
 
+users = {}
+
 class User:
     def __init__(self, username, system_content):
         self.username = username
@@ -45,40 +47,31 @@ class User:
         return self.messages[-1]
 
 
-class MessageManager:
-    def __init__(self):
-        self.users = {}
-
-message_manager = MessageManager()
 
 
 
 def get_chatgpt_response(prompt, username, system_content):
-    if username not in message_manager.users:
-        new_user = User(username, system_content)
-        message_manager.users["username"] = new_user
+    if username not in users:
+        users["username"] = User(username, system_content)
     
-    cur_user = message_manager.users["username"]
-    if cur_user.get_system_content() != system_content:
-        cur_user.update_system_content()
+    user = users["username"]
+    if user.get_system_content() != system_content:
+        user.update_system_content()
     
-    cur_user.messages.append({"role": "user", "content": prompt})
+    user.messages.append({"role": "user", "content": prompt})
+    print(user.messages)
 
     response = openai.chat.completions.create(
         model="gpt-4",
-        messages=cur_user.messages,
+        messages=user.messages,
         max_tokens=150
     )
-    # print(response)
     reply = response.choices[0].message.content
-    cur_user.messages.append({"role": "assistant", "content": reply})
+    user.messages.append({"role": "assistant", "content": reply})
 
-    # print(messages)
 
     
-    return cur_user.get_latest_message()['content']
-
-
+    return user.get_latest_message()['content']
 
 
 

@@ -42,7 +42,7 @@ def handle_login():
     print("successfully logged user to backend")
 
     database.get_user_by_username(username)
-    
+
     user_chat_system = database.get_users_current_voice_system(username)
     print(user_chat_system)
 
@@ -102,9 +102,9 @@ def handle_text_to_speech():
     text_response = get_gpt_response(text_data, username, system_prompt)
     # Save system message
     database.save_message(username=username, voice_system_name=voice_system_name, message_content=text_response, user_sent_this=False)
-
+    print(text_response)
     # Convert the ChatGPT text response to speech
-    audio = text_to_speech_controller(text_response, voice_id)
+    audio = text_to_speech_controller(text_response, voice_id, platform="playht")
     audio_base64 = base64.b64encode(audio).decode('utf-8')
     
     return jsonify({'audio': audio_base64, 'text_response': text_response})

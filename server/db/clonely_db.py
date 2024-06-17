@@ -142,6 +142,7 @@ class Database:
             ).fetchall()
             for voice in fetch_voices:
                 voices.append(dict(voice))
+            print(voices)
             return voices
     
     def save_message(self, username, voice_system_name, message_content, user_sent_this):
@@ -189,11 +190,15 @@ class Database:
         connection.commit()
         connection.close()
 
-    def update_db(self):
+    def update_system_prompt(self, voice_name, system_prompt):
         connection = self.get_db()
+        # connection.execute(
+        #     "UPDATE voice_systems SET system_prompt = ? WHERE voicename = ?",
+        #     ("You are Kanye West. Speak exactly how Kanye West would in interviews. Use  languages like 'fuck' and 'fucking' 'shit'. Use phrases like 'you don't know what you're talking about.' Mention censorship when it fits. Keep responses to 2-3 sentences max - only exception is when a user asks you to elaborate - then go off on a tangent for up to 5 sentences. Add filler words and repeat words for emphasis. Use -in' endings once in a while instead of -ing. If a user starts with a short message, respond with something like, 'Who am I speaking to?' Capitalize words for emphasis.", "Kanye West")
+        # )
         connection.execute(
             "UPDATE voice_systems SET system_prompt = ? WHERE voicename = ?",
-            ("You are Joe Biden. Talk like Joe Biden. Keep your responses 2-3 sentences max.", "Joe Biden")
+            (system_prompt, voice_name)
         )
         connection.commit()
         connection.close()
@@ -201,17 +206,28 @@ class Database:
     def insert_db(self):
         connection = self.get_db()
         connection.execute(
-            "INSERT INTO voice_systems SET (voicename, system_prompt, voice_url, voice_engine, gender) "
+            "INSERT INTO voice_systems (voicename, system_prompt, voice_url, voice_engine, gender) "
             "VALUES (?, ?, ?, ?, ?)",
-
+            ("Kanye West", 
+            "You are Kanye West. Speak exactly how Kanye West would in interviews. Use  languages like 'fuck' and 'fucking' 'shit'. Use phrases like 'you don't know what you're talking about.' Mention censorship when it fits. Keep responses to 2-3 sentences max. Add filler words and repeat words for emphasis. Use -in' endings once in a while instead of -ing. If a user starts with a short message, respond with something like, 'Who am I speaking to?'",
+            "s3://voice-cloning-zero-shot/79985637-baf4-4642-87b8-e5219d4b6d67/original/manifest.json",
+            "PlayHT2.0",
+            "male"
+            )
         )
+
+        connection.commit()
+        connection.close()
 
 
     def delete_table(self):
         connection = self.get_db()
-        connection.execute("DELETE FROM users_current_voice_system;")
+        connection.execute(
+            "DELETE FROM voice_systems WHERE id = 6;"
+        )
         connection.commit()
         connection.close()
+    
 
 
 
@@ -219,7 +235,19 @@ class Database:
     
 if __name__ == "__main__":
     database = Database()
-    # database.update_db()
+    system_prompt = '''
+                    You are Kanye West. 
+                    Speak exactly how Kanye West would in interviews.
+                    Use  languages like 'fuck' and 'fucking' 'shit'. 
+                    Use phrases like 'you don't know what you're talking about.' Mention censorship when it fits. 
+                    Keep responses to 2-3 sentences max - only exception is when a user asks you to elaborate - then go off on a tangent for up to 5 sentences. 
+                    Add filler words and repeat words for emphasis. Use -in' endings once in a while instead of -ing. 
+                    If a user starts with a short message, respond with something like, 'Who am I speaking to?'
+                    Keep it personal and relate to the user as much as possible
+                    '''
+    andrew_tate_prompt = "You are Andrew Tate. You will talk exactly how Andrew Tate Talks. Use words like 'fuck' 'shit' and 'fucking' in almost every sentence. Keep your responses 2-3 sentences max."
+    database.update_system_prompt("Andrew Tate", andrew_tate_prompt)
+    # database.delete_table()
     # database.list_all_messages()
     # database.create_messages_table()
     # print(database.get_users_current_voice_system("Charlie123"))
