@@ -149,14 +149,14 @@ def list_voices_from_11labs():
         print("\n")
 
 def stream_audio_from_11labs(text):
-    url = "https://api.elevenlabs.io/v1/text-to-speech/qDjKSZnlqTWWtjPnilLS"
+    url = "https://api.elevenlabs.io/v1/text-to-speech/1fSexxEUhRlhWVGVMVxm"
 
     payload = {
         "text": text,
         "voice_settings": {
             "stability": 0.5,
-            "similarity_boost": 0.7,
-            "style": 0.3,
+            "similarity_boost": 0.85,
+            "style": 0,
             "use_speaker_boost": True
         }
     }

@@ -47,7 +47,18 @@ class User:
         return self.messages[-1]
 
 
+def get_global_gpt_response(messages):
 
+    response = openai.chat.completions.create(
+        model="gpt-4",
+        messages=messages,
+        max_tokens=150
+    )
+    reply = response.choices[0].message.content
+
+    return reply
+
+    
 
 
 def get_chatgpt_response(prompt, username, system_content):
