@@ -5,6 +5,7 @@ import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } f
 
 const TabBarButton = (props) => {
     const {isFocused, label, routeName, color} = props;
+    // console.log(props)
 
     const scale = useSharedValue(0);
 

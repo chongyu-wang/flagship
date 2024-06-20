@@ -30,6 +30,13 @@ const _layout = () => {
             }}
         />
         <Tabs.Screen
+            name="calendar"
+            options={{
+                title: "Calendar",
+                headerShown: false
+            }}
+        />
+        <Tabs.Screen
             name="profile"
             options={{
                 title: "Profile",

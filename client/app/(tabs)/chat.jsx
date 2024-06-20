@@ -4,7 +4,7 @@ import { Audio } from 'expo-av';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../../components/CustomButton';
 import { Buffer } from 'buffer';
-import { speechToText, getCompletion, fetchAudio, sendAudio } from '../../hooks/useApi';
+import { sendAudioToGetResponse } from '../../hooks/useApi';
 // import { fetchAudio } from '../../hooks/audioProcessing';
 import TypingText from '../../components/TypingText';
 import ChatTextInput from '../../components/ChatTextInput';
@@ -43,18 +43,6 @@ const Chat = () => {
     };
   }, [recording]);
 
-  const getAudioResponse = async (text) => {
-    setText('');
-    try {
-      setIsLoading(true);
-      const base64Audio = await fetchAudio(text);
-
-      playAudio(base64Audio);
-    } catch (error) {
-      console.error('Error fetching audio:', error);
-      setIsLoading(false);
-    }
-  };
 
   const playAudio = async (base64Audio) => {
     const audioBuffer = Buffer.from(base64Audio, 'base64');
@@ -113,7 +101,7 @@ const Chat = () => {
       console.error('Failed to start recording', err);
     }
   };
-
+ 
   const stopRecording = async () => {
     setIsRecording(false);
     setIsLoading(true);
@@ -126,8 +114,8 @@ const Chat = () => {
       setRecording(null);
     
       if (uri) {
-        const audioResponse = await sendAudio(uri);
-        await getAudioResponse(audioResponse);
+        const audioResponse = await sendAudioToGetResponse(uri);
+        await playAudio(audioResponse);
       }
     } catch (err) {
       console.error("ERROR", err);

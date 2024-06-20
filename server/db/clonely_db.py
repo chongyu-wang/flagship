@@ -227,11 +227,7 @@ class Database:
         )
         connection.commit()
         connection.close()
-    
 
-
-
-    
     
 if __name__ == "__main__":
     database = Database()
