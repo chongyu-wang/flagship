@@ -8,9 +8,7 @@ class UserManager:
     def handle_login(self, username, email):
         if not username:
             return 'error username not provided', 400
-
         self.database.get_user_by_username(username)
-
         user_chat_system = self.database.get_users_current_voice_system(username)
         if not user_chat_system:
             user_chat_system = self.database.insert_users_current_voice_system(username)
@@ -20,8 +18,8 @@ class UserManager:
     def switch_chat(self, username, data):
         voicename = data['voice_name']
         self.database.update_users_current_voice_system(username, voicename)
-
-        return 'success', 200
+        print("username: ", username, " successfully switched chat to")
+        print(data)
 
     def get_voices(self):
         voices = self.database.list_voices()

@@ -14,24 +14,27 @@ def fetch_and_print_data(db_name):
         table_name = table_name[0]
         
         # Skip the 'messages' table
-        if table_name == 'messages':
-            continue
+        # if table_name == 'messages':
+        #     continue
         
-        print(f"TABLE NAME {table_name}")
+        print(f"TABLE NAME: {table_name}")
 
         # Fetch the column names for the table
         cursor.execute(f"PRAGMA table_info({table_name});")
         columns = cursor.fetchall()
         column_names = [column[1] for column in columns]
 
+        # Print column names
+        print("COLUMNS:", column_names)
+
         # Fetch all rows from the table
         cursor.execute(f"SELECT * FROM {table_name};")
         rows = cursor.fetchall()
 
-        # Print each row
+        # Print each row with column names
         for row in rows:
-            for content in row:
-                print(content)
+            for col_name, value in zip(column_names, row):
+                print(f"{col_name}: {value}")
             print()
 
     # Close the connection

@@ -9,15 +9,15 @@ class ModelB:
         self.openai_client = openai
         self.openai_client.api_key = os.getenv('OPENAI_API_KEY')
 
-    def get_chatgpt_response(self, username, prompt, system_content):
-        voicename = system_content.get("voicename")
+    def get_chatgpt_response(self, recieved_messages, system_content):
         system_prompt = system_content.get("system_prompt")
 
         messages = []
         messages.append({"role": "system", "content": system_prompt})
         
-        messages.append({"role": "user", "content": prompt})
-        print(messages)
+        messages += recieved_messages
+        for message in messages:
+            print(message)
 
         response = openai.chat.completions.create(
             model="gpt-4",

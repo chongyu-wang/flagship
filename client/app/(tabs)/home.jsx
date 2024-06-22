@@ -43,12 +43,12 @@ const Home = () => {
 
   return (
     <SafeAreaView className="bg-primary h-full">
-      <LottieView 
+      {/* <LottieView 
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: -1 }}
         source={require("../../assets/lottie/BackgroundAnimation.json")} 
         autoPlay 
-        loop 
-      />
+        loop  
+      /> */}
       <FlatList
         style={{marginBottom: 0,
           paddingBottom: 0,
