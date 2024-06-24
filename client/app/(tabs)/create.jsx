@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, TouchableOpacity, TouchableWithoutFeedback, Image, Keyboard } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, Image, Keyboard, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import CustomButton from '../../components/CustomButton';
 import { router } from 'expo-router';
+import { FontAwesome } from "@expo/vector-icons";
 
 const Create = () => {
   const [title, setTitle] = useState('');
@@ -22,86 +23,87 @@ const Create = () => {
     });
 
     if (!result.cancelled) {
-      console.log(result);
       setImage(result.uri);
-      console.log(image);
     }
   };
 
   const onSubmit = () => {
     // Handle form submission
-    // console.log({ title, description, date, image });
-    console.log("poop");
+    console.log({ title, description, date, image });
   };
 
   return (
-    <SafeAreaView className="bg-primary h-full p-4 min-h-[85vh]">
-      {/* <TouchableOpacity onPress={() => router.replace('/home')}>
-        <Text className="text-white">
-          go home
-        </Text>
-      </TouchableOpacity> */}
+    <SafeAreaView className="bg-primary h-full p-6 min-h-[85vh]">
+      <ScrollView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View>
-      <View className="mb-4 mt-16">
-        <Text className="text-white text-lg mb-2">Event Title</Text>
-        <TextInput
-          className="border p-2 rounded-2xl border-secondary text-white"
-          placeholder="Enter event title"
-          placeholderTextColor="#ccc"
-          value={title}
-          onChangeText={setTitle}
-        />
-      </View>
+        <View>
+          <TouchableOpacity onPress={onSubmit} className="absolute top-1 right-1">
+            <FontAwesome name="send" size={32} color={"#A9A9A9"}/>
+          </TouchableOpacity>
+          <View className="mb-8 mt-10">
+            <Text className="text-white text-lg font-semibold mb-2">Event Title</Text>
+            <TextInput
+              className="border border-gray-500 p-3 rounded-3xl text-white"
+              placeholder="Enter event title"
+              placeholderTextColor="#ccc"
+              value={title}
+              onChangeText={setTitle}
+            />
+          </View>
 
-      <View className="mb-4">
-        <Text className="text-white text-lg mb-2">Event Description</Text>
-        <TextInput
-          className="border p-2 rounded-2xl border-secondary text-white"
-          placeholder="Enter event description"
-          placeholderTextColor="#ccc"
-          multiline
-          value={description}
-          onChangeText={setDescription}
-        />
-      </View>
+          <View className="mb-8">
+            <Text className="text-white text-lg font-semibold mb-2">Event Picture</Text>
+            <TouchableOpacity onPress={pickImage} className="border border-gray-500 p-3 rounded-3xl items-center">
+              <Text className="text-white mb-1">Pick an image</Text>
+              <FontAwesome name="photo" size={32} color={"#A9A9A9"}/>
+            </TouchableOpacity>
+            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200, marginTop: 10, borderRadius: 10 }} />}
+          </View>
 
-      <View className="mb-4">
-        <Text className="text-white text-lg mb-2">Event Date</Text>
-        <TouchableOpacity onPress={() => setShowDatePicker(true)} className="border p-2 rounded-2xl border-secondary">
-          <Text className="text-white">{date.toDateString()}</Text>
-        </TouchableOpacity>
-        {showDatePicker && (
-          <DateTimePicker
-            value={date}
-            mode="date"
-            display="default"
-            onChange={(event, selectedDate) => {
-              const currentDate = selectedDate || date;
-              setShowDatePicker(false);
-              setDate(currentDate);
-            }}
-          />
-        )}
-      </View>
+          <View className="mb-8">
+            <Text className="text-white text-lg font-semibold mb-2">Event Description</Text>
+            <TextInput
+              className="border border-gray-500 p-3 rounded-3xl text-white h-40"
+              placeholder="Enter event description"
+              placeholderTextColor="#ccc"
+              multiline
+              value={description}
+              onChangeText={setDescription}
+              numberOfLines={4}
+            />
+          </View>
 
-      <View className="mb-4">
-        <Text className="text-white text-lg mb-2">Event Picture</Text>
-        <TouchableOpacity onPress={pickImage} className="border p-2 rounded-2xl border-secondary items-center">
-          <Text className="text-white">Pick an image</Text>
-        </TouchableOpacity>
-        {image && <Image source={{ uri: image }} style={{ width: 200, height: 200, marginTop: 10 }} />}
-      </View>
+          <View className="mb-8">
+            <Text className="text-white text-lg font-semibold mb-2">Event Date</Text>
+            <TouchableOpacity onPress={() => setShowDatePicker(true)} className="border border-gray-500 p-3 rounded-3xl">
+              <Text className="text-white">{date.toDateString()}</Text>
+            </TouchableOpacity>
+            {showDatePicker && (
+              <DateTimePicker
+                value={date}
+                mode="date"
+                display="default"
+                onChange={(event, selectedDate) => {
+                  const currentDate = selectedDate || date;
+                  setShowDatePicker(false);
+                  setDate(currentDate);
+                }}
+              />
+            )}
+          </View>
 
-      <CustomButton
+          {/* <CustomButton
             title="Submit Event"
             handlePress={onSubmit}
-            containerStyles="w-3/5 mt-8"
-          />
-      </View>
+            containerStyles="p-3 rounded-3xl bg-slate-800"
+            textStyles="text-slate-200 text-lg font-semibold"
+          /> */}
+        </View>
       </TouchableWithoutFeedback>
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
 export default Create;
+

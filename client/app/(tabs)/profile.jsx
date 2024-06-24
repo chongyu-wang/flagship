@@ -1,11 +1,11 @@
-import { View, Text, TouchableOpacity, FlatList } from 'react-native'
-import React, {useEffect, useState} from 'react'
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AntDesign, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import { getCurrentUser, signIn, signOut } from '../../lib/appwrite';
+import { AntDesign } from "@expo/vector-icons";
+import { getCurrentUser, signOut } from '../../lib/appwrite';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { getVoiceNames, switchUserVoiceSystem } from '../../hooks/useApi';
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
 
 const Profile = () => {
   const [curUser, setCurUser] = useState("");
@@ -26,7 +26,6 @@ const Profile = () => {
     }
     fetchUser();
     fetchVoiceNames();
-
   }, []);
 
   const handleNamePress = async(name) => {
@@ -34,39 +33,45 @@ const Profile = () => {
     setCurrentVoice(name);
   }
 
-
   const logOut = async() => {
     await signOut();
     setUser(null);
     setIsLoggedIn(false);
-
     router.replace("/sign-in");
   }
 
-
-
   return (
-    <SafeAreaView className="bg-primary h-full justify-center items-center">
-      <TouchableOpacity className="mb-8" onPress={logOut}>
-        <Text className="text-white">
-          Sign Out
-        </Text>
-      </TouchableOpacity>
-      <AntDesign name="user" size={64} color={"#A9A9A9"} classname="mb-2"/>
-      <Text className="text-slate-300 text-xl">{curUser}</Text>
-
-      <Text className="text-slate-300 my-8">Current voice System: {currentVoice} </Text>
-      {voiceNames.map(voice => (
-        <TouchableOpacity
-          key={voice.id} onPress={() => handleNamePress(voice.voicename)}
-          className={`my-2 border-2 rounded-3xl w-3/5 items-center
-          ${ voice.voicename === currentVoice ? "border-blue-500": "border-slate-500"}`}
-        >
-          <Text className={`${ voice.voicename === currentVoice ? "text-blue-500": "text-slate-500"} my-2 mx-2`}>{voice.voicename}</Text>
+    <SafeAreaView className="bg-primary h-full p-6">
+      <View className="w-full flex-row justify-between items-center mb-8">
+        <View className="flex-row items-center">
+          <AntDesign name="user" size={32} color={"#A9A9A9"} />
+          <Text className="text-slate-300 text-2xl font-bold ml-2">{curUser}</Text>
+        </View>
+        <TouchableOpacity onPress={logOut} className="rounded-3xl">
+          <Text className="text-slate-500 text-lg mx-2">
+            Sign Out
+          </Text>
         </TouchableOpacity>
-      ))}
+      </View>
+      <Text className="text-slate-300 text-lg mb-4">Current Voice System: <Text className="text-white font-semibold">{currentVoice}</Text></Text>
+      <ScrollView className="w-full" contentContainerStyle={{ alignItems: 'center' }}>
+        <View className="w-full flex-row flex-wrap justify-between">
+          {voiceNames.map(voice => (
+            <TouchableOpacity
+              key={voice.id} onPress={() => handleNamePress(voice.voicename)}
+              className={`my-2 border-0 rounded-3xl w-[48%] p-4 items-center bg-gray-800 h-[48%] justify-center
+              ${voice.voicename === currentVoice ? "border-blue-500": "border-slate-500"}`}
+            >
+              <Text className={`${voice.voicename === currentVoice ? "text-blue-500": "text-white"} text-lg font-medium`}>{voice.voicename}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   )
 }
 
-export default Profile
+export default Profile;
+
+
+

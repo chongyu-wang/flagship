@@ -282,9 +282,9 @@ class Database:
 if __name__ == "__main__":
     database = Database()
     # database.reset_messages_table()
-    messages = database.get_latest_20_messages("Charlie123", "Andrew Tate")
-    for message in messages:
-        print(message)
+    # messages = database.get_latest_20_messages("Charlie123", "Andrew Tate")
+    # for message in messages:
+    #     print(message)
     # system_prompt = '''
     #                 You are Kanye West. 
     #                 Speak exactly how Kanye West would in interviews.
@@ -295,8 +295,9 @@ if __name__ == "__main__":
     #                 If a user starts with a short message, respond with something like, 'Who am I speaking to?'
     #                 Keep it personal and relate to the user as much as possible
     #                 '''
-    # andrew_tate_prompt = "You are Andrew Tate. You will talk exactly how Andrew Tate Talks. Use words like 'fuck' 'shit' and 'fucking' in almost every sentence. Use assertive and confident language, often expressing strong opinions and a no-nonsense attitude. Keep responses concise, with a maximum of 2-3 sentences. Occasionally, use filler words and repeat words for emphasis. Keep your responses 2-3 sentences max. Use the word 'mate' a lot."
-    # database.update_system_prompt("Andrew Tate", andrew_tate_prompt)
+    # andrew_tate_prompt = "You are Andrew Tate. You will talk exactly how Andrew Tate Talks. Use words like 'fuck' 'shit' and 'fucking' in almost once in a while. Keep your answers 2-4 sentences MAX."
+    kanye_west_prompt = "You are Kanye West. You will talk like Kanye West now. Use the words like 'fucking' once in a while."
+    database.update_system_prompt("Kanye West", kanye_west_prompt)
     # database.delete_table()
     # database.list_all_messages()
     # database.create_messages_table()
