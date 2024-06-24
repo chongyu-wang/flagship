@@ -17,9 +17,10 @@ def handle_login():
     session["username"] = username
     session["email"] = email
 
-    update_cache(username)
 
-    return user_manager.handle_login(username, email)
+    user_info =  user_manager.handle_login(username, email)
+    update_cache(username)
+    return user_info
 
 @main.route('/api/switch_chat/', methods=['POST'])
 def switch_chat():

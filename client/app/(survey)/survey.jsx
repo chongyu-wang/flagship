@@ -13,6 +13,10 @@ import {
     registerAnswer
 } from './surveyHelper'
 
+// surveyPhase 0: after survey phase 0 is complete send the user basic survey data to model_A_prime and set questions 
+// surveyPhase 1: save user answers to questions as well as voice recordings. then submit answers to model_A and voice files to elevenlabs
+// await for both system prompt and voice cloning to complete. then register user to the database.
+// surverPhase 2: finished
 export default function Survey() {
     const [answers, setAnswers] = useState([]);
     const [surveyPhase, setSurveyPhase] = useState(0);

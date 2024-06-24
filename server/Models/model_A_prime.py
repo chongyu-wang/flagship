@@ -9,7 +9,7 @@ gender: (male, female, or prefer not to say),
 primary_reason: [tag1, tag2, tag3,...,tagn]
 }
 
-and you will give me 10 interview questions in a json format  to gauge the person's personality and life story. 
+and you will give me 10 interview questions in a json format to gauge the person's personality and life story. 
 GIVE ME ONLY THE JSON AND NO OTHER TEXT in the following form 
 {
 questions: [

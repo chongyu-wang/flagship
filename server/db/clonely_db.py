@@ -9,6 +9,7 @@ class Database:
     Table: users
         id INTEGER PRIMARY KEY
         username TEXT NOT NULL
+        current_voice_id FOREIGN KEY REFERENCES(voice_systems)
         Table: users_current_voice_system
     
     Table: users_current_voice_system
@@ -34,6 +35,16 @@ class Database:
         FOREIGN KEY (user_id) REFERENCES users(id),
         FOREIGN KEY (voice_system_id) REFERENCES voice_systems(id)
 
+    Table: posts
+        id PRIMARY KEY,
+        creator_id INTEGER,
+        title TEXT NOT NULL,
+        date TEXT NOT NULL,
+        description TEXT NOT NULL,
+        aws_id/aws_url WHATEVER,
+        FOREIGN KEY (creator_id) REFERENCES users(id),
+
+
     '''
     def __init__(self):
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -48,6 +59,9 @@ class Database:
         return connection
     
     def get_user_by_username(self, username):
+        print("9"*180)
+        print(username)
+        print("9"*180)
         connection = self.get_db()
         user = connection.execute(
             "SELECT username, id FROM users WHERE username = ?",
@@ -63,6 +77,7 @@ class Database:
 
     def add_user_by_username(self, username):
         connection = self.get_db()
+        print("8"*180)
         connection.execute(
             "INSERT INTO users (username) VALUES (?)",
             (username, )
@@ -79,24 +94,20 @@ class Database:
 
         return dict(newUser)
 
-
-    
     def get_users_current_voice_system(self, username):
         connection = self.get_db()
         voice_system = connection.execute(
             "SELECT VS.voicename, VS.system_prompt, VS.voice_url "
-            "FROM "
-            "voice_systems VS INNER JOIN users_current_voice_system UC "
-            "INNER JOIN users U "
-            "ON VS.id = UC.voice_system_id "
-            "AND U.id = UC.user_id "
+            "FROM voice_systems VS "
+            "INNER JOIN users_current_voice_system UC ON VS.id = UC.voice_system_id "
+            "INNER JOIN users U ON U.id = UC.user_id "
             "WHERE U.username = ?",
             (username,)
         ).fetchone()
 
         connection.close()
 
-        if voice_system == None:
+        if voice_system is None:
             return self.insert_users_current_voice_system(username)
 
         voice_system = dict(voice_system)
@@ -127,20 +138,11 @@ class Database:
             (username, )
         )
         connection.commit()
-        voice_system = connection.execute(
-            "SELECT VS.voicename, VS.system_prompt, VS.voice_url "
-            "FROM "
-            "voice_systems VS INNER JOIN users_current_voice_system UC "
-            "INNER JOIN users U "
-            "ON VS.id = UC.voice_system_id "
-            "AND U.id = UC.user_id "
-            "WHERE U.username = ?",
-            (username,)
-        ).fetchone()
-
         connection.close()
 
-        return dict(voice_system)
+        return self.get_users_current_voice_system(username)
+
+
     
     def get_latest_20_messages(self, username, voicename):
         connection = self.get_db()

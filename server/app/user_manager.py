@@ -6,6 +6,9 @@ class UserManager:
         self.database = Database()
 
     def handle_login(self, username, email):
+        print("8"*180)
+        print(username)
+        print("9"*180)
         if not username:
             return 'error username not provided', 400
         self.database.get_user_by_username(username)

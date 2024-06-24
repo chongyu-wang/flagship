@@ -16,16 +16,16 @@ const _layout = () => {
             }}
         />
         <Tabs.Screen
-            name="chat"
+            name="create"
             options={{
-                title: "Chat",
+                title: "Create",
                 headerShown: false
             }}
         />
         <Tabs.Screen
-            name="create"
+            name="chat"
             options={{
-                title: "Create",
+                title: "Chat",
                 headerShown: false
             }}
         />

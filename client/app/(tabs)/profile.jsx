@@ -22,11 +22,23 @@ const Profile = () => {
     const fetchVoiceNames = async () => {
       const result = await getVoiceNames();
       console.log(result)
-      setVoiceNames(result);
+      setVoiceNames(result.map(voice => ({
+        ...voice,
+        color: getRandomColor()
+      })));
     }
     fetchUser();
     fetchVoiceNames();
   }, []);
+
+  const getRandomColor = () => {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
 
   const handleNamePress = async(name) => {
     await switchUserVoiceSystem(name);
@@ -59,7 +71,8 @@ const Profile = () => {
           {voiceNames.map(voice => (
             <TouchableOpacity
               key={voice.id} onPress={() => handleNamePress(voice.voicename)}
-              className={`my-2 border-0 rounded-3xl w-[48%] p-4 items-center bg-gray-800 h-[48%] justify-center
+              style={{ backgroundColor: voice.color }}
+              className={`my-2 border-0 rounded-3xl w-[48%] p-4 items-center h-[48%] justify-center
               ${voice.voicename === currentVoice ? "border-blue-500": "border-slate-500"}`}
             >
               <Text className={`${voice.voicename === currentVoice ? "text-blue-500": "text-white"} text-lg font-medium`}>{voice.voicename}</Text>
@@ -72,6 +85,8 @@ const Profile = () => {
 }
 
 export default Profile;
+
+
 
 
 

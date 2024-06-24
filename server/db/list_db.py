@@ -14,8 +14,8 @@ def fetch_and_print_data(db_name):
         table_name = table_name[0]
         
         # Skip the 'messages' table
-        # if table_name == 'messages':
-        #     continue
+        if table_name == 'messages':
+            continue
         
         print(f"TABLE NAME: {table_name}")
 
