@@ -127,9 +127,20 @@ class Database:
             (username, )
         )
         connection.commit()
+        voice_system = connection.execute(
+            "SELECT VS.voicename, VS.system_prompt, VS.voice_url "
+            "FROM "
+            "voice_systems VS INNER JOIN users_current_voice_system UC "
+            "INNER JOIN users U "
+            "ON VS.id = UC.voice_system_id "
+            "AND U.id = UC.user_id "
+            "WHERE U.username = ?",
+            (username,)
+        ).fetchone()
+
         connection.close()
 
-        return self.get_users_current_voice_system(username)
+        return dict(voice_system)
     
     def get_latest_20_messages(self, username, voicename):
         connection = self.get_db()
