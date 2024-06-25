@@ -36,7 +36,16 @@ class ChatManager:
 
     def get_speech_from_text(self, voice_system, text):
         voice_url = voice_system.get("voice_url")
-        audio_response = self.speech_processor.stream_audio_from_text(text, voice_url)
+        voice_engine = voice_system.get("voice_engine")
+        audio_response = None
+
+        if voice_engine == "playht":
+            audio_response = self.speech_processor.stream_audio_from_text(text, voice_url)
+        elif voice_engine == "elevenlabs":
+            audio_response = self.speech_processor.stream_audio_from_11labs(text, voice_url)
+        else:
+            ValueError("invalid voice engine")
+
         audio_base64 = base64.b64encode(audio_response).decode('utf-8')
 
         return audio_base64
@@ -53,6 +62,12 @@ class ChatManager:
         audio_response = self.get_speech_from_text(user_voice_system, gpt_response)
 
         return jsonify({'audio': audio_response, 'text_response': gpt_response})
+    
+    def get_default_speech_from_text(self, text):
+        audio_response = self.speech_processor.get_default_speech_from_text(text)
+        audio_base64 = base64.b64encode(audio_response).decode('utf-8')
+
+        return audio_base64
     
 
 

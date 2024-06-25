@@ -1,7 +1,10 @@
 export const userDataQuestions = [
     "What is your name?",
     "What is your gender?",
-    "When is your birthday?"
+    "When was your date of birth?",
+    "What are 3 words that best describe you",
+    "How would your best friends describe you"
+    // "Proceed to Phase 2."
 ];
 
 export const questionnaireQuestions = [

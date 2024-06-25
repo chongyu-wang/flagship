@@ -1,13 +1,17 @@
 from flask import Blueprint, request, jsonify, session
+import json
+import os
+import random
 from .chat_manager import ChatManager
 from .user_manager import UserManager
 from .cache import voice_systems_cache, messages_cache, update_messages, update_user_voice_system, append_cache_messages, get_cache_messages, get_cache_voice_system
-
+from werkzeug.utils import secure_filename
 main = Blueprint('main', __name__)
 
 # Initialize managers
 chat_manager = ChatManager()
 user_manager = UserManager()
+
 
 @main.route('/api/login', methods=['POST'])
 def handle_login():
@@ -68,9 +72,34 @@ def process_audio_chat():
     return response, 200
 
 
-@main.route('/text_to_speech', methods=['POST'])
+@main.route('/api/speech-to-text/', methods=['POST'])
+def handle_speech_to_text():
+    print("a"*180)
+    if 'file' not in request.files:
+        return 'No file or username part', 400
+    
+    audio_file = request.files['file']
+    
+    # Process the audio file to get transcription
+    user_text_transcription = chat_manager.get_text_from_speech(audio_file)
+    print(user_text_transcription)
+
+    # Save the file to the current directory
+    filename = secure_filename(audio_file.filename)  # Ensuring the filename is secure
+    audio_file.save(filename)
+    
+
+    return jsonify({"transcription": user_text_transcription}), 200
+
+
+
+@main.route('/api/text_to_speech/', methods=['POST'])
 def text_to_speech():
-    return chat_manager.text_to_speech()
+    text_data = request.json.get('text')
+    print(text_data)
+    print(type(text_data))
+    audio_base64 = chat_manager.get_default_speech_from_text(text_data)
+    return jsonify({'audio': audio_base64, 'text_response': text_data}), 200
 
 
 def update_cache(username):
@@ -79,3 +108,47 @@ def update_cache(username):
 
     update_user_voice_system(username, user_voice_system)
     update_messages(username, user_messages)
+
+
+@main.route('/api/generate-questions/', methods=["POST"])
+def generate_questions():
+    # Get the JSON data from the request
+    data = json.loads(request.data)
+    submitData = data["submitData"]
+    responses = submitData["responses"]
+    username = submitData["username"]
+    for response in responses:
+        question = response["question"]
+        answer = response["answer"]
+        user_manager.save_answer(username=username,question=question,answer=answer)
+    submitData = json.dumps(submitData)
+    print(submitData)
+
+    # survey_questions = user_manager.get_survey_questions(submitData=submitData)
+    # print(survey_questions)
+    # survey_questions = json.loads(survey_questions)
+
+    test_questions = {"questions": ["what is your biggest goal and why?", "How many times can a woodchuck sell grass?", "That concludes the questions"]}
+
+    return jsonify(test_questions), 200
+
+@main.route('/api/save-answer-to-db/', methods=['POST'])
+def save_answer_to_db():
+    data = json.loads(request.data)
+    username, question, answer = data.get("username"), data.get("question"), data.get("answer")
+    if not username or not question or not answer:
+        return "MISSING SOME SHIT DAWG", 400
+    
+    user_manager.save_answer(username=username, question=question, answer=answer)
+
+    return 'Success', 200
+
+
+@main.route('/api/process-clone/', methods=['POST'])
+def process_clone():
+    data = json.loads(request.data)
+    username = data.get("username")
+    responses = user_manager.get_user_response_for_training(username)
+    system_prompt = user_manager.get_system_prompt_from_response(responses)
+
+

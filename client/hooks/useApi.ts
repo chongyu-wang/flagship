@@ -2,7 +2,7 @@ import { Alert } from 'react-native';
 
 // Function to convert speech to text using the Flask backend server
 
-const SERVER_IP = '35.1.84.115'
+const SERVER_IP = '10.0.0.82'
 
 export const registerUserToBackend = async(username : string, email: string) => {
   console.log("registering user with username: ", username);
@@ -35,7 +35,6 @@ export const switchUserVoiceSystem = async( voiceName: string) => {
       body: JSON.stringify({ voice_name: voiceName})
     });
 
-    console.log("gggggggggggggggggggggggggggg");
 
     if (!response.ok) {
       const errorResponse = await response.json();
@@ -66,42 +65,12 @@ export const getUsersCurrentVoiceSystem = async() => {
   console.log("getting user current voice system");
 }
 
-export const speechToText = async (audioUri: string) => {
-    console.log(audioUri);
-    try {
-        const response = await fetch(`http://${SERVER_IP}:3000/api/speech-to-text`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ audio_url: audioUri }),
-        });
-
-        if (!response.ok) {
-            const errorResponse = await response.json();
-            throw new Error(errorResponse.error || 'An error occurred');
-        }
-
-        const result = await response.json();
-        return result;
-
-    } catch (error: any) {
-        if (error instanceof SyntaxError) {
-            console.error('Response was not JSON:', error);
-            Alert.alert('Error', 'Received non-JSON response from server');
-        } else {
-            console.error('Error in speechToText:', error);
-            Alert.alert('Error', error.message || 'An error occurred');
-        }
-    }
-};
-
 
 export const fetchAudio = async (text: string) => {
     console.log("fetching audio");
     console.log(SERVER_IP);
     try {
-      const response = await fetch(`http://${SERVER_IP}:3000/text_to_speech`, {
+      const response = await fetch(`http://${SERVER_IP}:3000/api/text_to_speech/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,7 +88,7 @@ export const fetchAudio = async (text: string) => {
     }
   };
 
-export const sendAudio = async (uri: string): Promise<string | void> => {
+export const sendAudio = async (uri: string, username: string): Promise<string | void> => {
     if (uri) {
       try {
         const fileType = 'audio/mpeg';
@@ -131,7 +100,7 @@ export const sendAudio = async (uri: string): Promise<string | void> => {
           type: fileType
         } as any);
   
-        const fetchResponse = await fetch(`http://${SERVER_IP}:3000/api/process-audio-chat/`, {
+        const fetchResponse = await fetch(`http://${SERVER_IP}:3000/api/speech-to-text/`, {
           method: 'POST',
           body: formData,
           headers: {
@@ -147,14 +116,14 @@ export const sendAudio = async (uri: string): Promise<string | void> => {
         const data = await fetchResponse.json();
         console.log(data.transcription);
         return data.transcription;
-
+  
       } catch (error) {
         console.error('Error:', error);
       } finally {
         console.log("done it");
       }
     }
-};
+};  
 
 export const sendAudioToGetResponse = async (uri: string): Promise<string | void> => {
   if (uri) {
@@ -193,4 +162,48 @@ export const sendAudioToGetResponse = async (uri: string): Promise<string | void
     }
   }
 }
+
+export const submitUserData = async (submitData: any): Promise<string[] | void> => {
+  console.log(submitData);
+  console.log(typeof submitData);
+  
+  const response = await fetch(`http://${SERVER_IP}:3000/api/generate-questions/`, {
+    method: 'POST',
+    body: JSON.stringify({ submitData: submitData }),
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json', // Ensure the content type is set to application/json
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("RESPONSE NOT OK");
+  }
+
+  const responseData = await response.json(); // Await the response JSON
+  const questions = responseData.questions; // Access the questions property
+  
+  console.log(questions);
+  return questions;
+}
+
+export const saveAnswerToDb = async (username: string, question: string, answer: string): Promise<string | void> => {
+  const response = await fetch(`http://${SERVER_IP}:3000/api/save-answer-to-db/`, {
+    method: 'POST',
+    body: JSON.stringify({username: username, question: question, answer: answer}),
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json', // Ensure the content type is set to application/json
+    },
+  });
+
+  if (!response.ok) {
+    console.log("RESPONSE NOT OK DAWG");
+    throw new Error("RESPONSE NOT OK");
+  }
+
+  const responseData = await response.json();
+  console.log(responseData);
+}
+
   

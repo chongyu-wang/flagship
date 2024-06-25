@@ -130,7 +130,14 @@ const Chat = () => {
           {
           (!isPlaying && !isLoading && !isRecording) ? 
           (
-            <TypingText />
+            <TypingText
+              text1={"Hold the Screen to Chat."}
+              text2={"Release When Done Talking.."}
+              text3={"Hold the Screen to Chat..."}
+              time1={3000}
+              time2={3000}
+              time3={3000}
+            />
           ) :
           isRecording ?
           (

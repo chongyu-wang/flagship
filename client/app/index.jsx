@@ -11,7 +11,7 @@ import { registerUserToBackend } from '../hooks/useApi';
 import LottieView from 'lottie-react-native';
 
 export default function App() {
-  const { isLoading, isLoggedIn, user } = useGlobalContext();
+  const { isLoading, isLoggedIn, user, surveyCompleted } = useGlobalContext();
 
   useEffect(() => {
     const checkUser = async () => {
@@ -25,8 +25,12 @@ export default function App() {
   }, [isLoading, isLoggedIn, user]);
   
 
-  if (!isLoading && isLoggedIn) {
+  if (!isLoading && isLoggedIn && surveyCompleted) {
     return <Redirect href="/home" />;
+  }
+
+  else if (!isLoading && isLoggedIn && !surveyCompleted) {
+    return <Redirect href="/survey" />;
   }
 
   return (

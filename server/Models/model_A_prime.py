@@ -1,12 +1,8 @@
-'''
-SYSTEM PROMPT:
-
+SYSTEM_PROMPT =  '''
 I will give you a description of a person in a json format in the following form
 {
-name: person's name,
-age: some number,
-gender: (male, female, or prefer not to say),
-primary_reason: [tag1, tag2, tag3,...,tagn]
+username: <username>
+responses: {"answer": <answer>, "question": "What is your name?"}, {"answer": <answer>, "question": "What is your gender?"}, {"answer": <answer>, "question": "When was your date of birth?"}
 }
 
 and you will give me 10 interview questions in a json format to gauge the person's personality and life story. 
@@ -24,14 +20,13 @@ EXAMPLE:
 user:
 
 {
-name: john mcdonald,
-age: 80,
-gender: male
-primary_reason_for_self_cloning: ["legacy", "keeping memories for loved ones", "curiosity"
+username: john123
+responses: {"answer": johnsmith, "question": "What is your name?"}, {"answer": male, "question": "What is your gender?"}, {"answer": 2001-12-07, "question": "When was your date of birth?"}
 }
 
 chatGPT:
 
+{
 "questions": 
 [
 "Can you share a highlight from your childhood that had a significant impact on who you are today?",
@@ -47,13 +42,33 @@ chatGPT:
 ]
 }
 
-***THEN SAVE THE QUESTIONS AND ANSWERS TO THE DATABASE***
 '''
+
+import openai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 class ModelAPrime:
     def __init__(self):
-        pass
+        self.system_prompt = SYSTEM_PROMPT
+        self.openai_client = openai
+        self.openai_client.api_key = os.getenv('OPENAI_API_KEY')
 
-    def generate_questions(self,user_data):
-        # Implement logic to generate questions using Model A'
-        pass
+    def generate_questions(self, user_data):
+
+        messages = []
+        messages.append({"role": "system", "content": self.system_prompt})
+        
+        messages.append({"role": "user", "content": user_data})
+
+        response = openai.chat.completions.create(
+            model="gpt-4",
+            messages=messages,
+            max_tokens=150
+        )
+        reply = response.choices[0].message.content
+        
+        return reply

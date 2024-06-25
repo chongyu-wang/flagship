@@ -91,8 +91,8 @@ class SpeechProcessor:
             print("voice_id: ", voice["voice_id"])
             print("\n")
 
-    def stream_audio_from_11labs(self, text):
-        url = "https://api.elevenlabs.io/v1/text-to-speech/1fSexxEUhRlhWVGVMVxm"
+    def stream_audio_from_11labs(self, text, voice_url):
+        url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_url}"
 
         payload = {
             "text": text,
@@ -131,3 +131,28 @@ class SpeechProcessor:
         response = requests.post(url, json=payload, headers=headers)
 
         return response.content
+    
+    def get_default_speech_from_text(self, text):
+        url = f"https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM"
+
+        payload = {
+            "text": text,
+            "voice_settings": {
+                "stability": 0.5,
+                "similarity_boost": 0.85,
+                "style": 0,
+                "use_speaker_boost": True
+            }
+        }
+        headers = {
+            "xi-api-key": ELEVEN_LABS_API_KEY,
+            "Content-Type": "application/json"
+        }
+
+        response = requests.request("POST", url, json=payload, headers=headers)
+
+        return response.content
+    
+if __name__ == "__main__":
+    speech_processor = SpeechProcessor()
+    print(speech_processor.list_voices_from_11labs())

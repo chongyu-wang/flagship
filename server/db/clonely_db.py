@@ -97,7 +97,7 @@ class Database:
     def get_users_current_voice_system(self, username):
         connection = self.get_db()
         voice_system = connection.execute(
-            "SELECT VS.voicename, VS.system_prompt, VS.voice_url "
+            "SELECT VS.voicename, VS.system_prompt, VS.voice_url, VS.voice_engine "
             "FROM voice_systems VS "
             "INNER JOIN users_current_voice_system UC ON VS.id = UC.voice_system_id "
             "INNER JOIN users U ON U.id = UC.user_id "
@@ -294,30 +294,12 @@ class Database:
     
 if __name__ == "__main__":
     database = Database()
-    # database.reset_messages_table()
-    # messages = database.get_latest_20_messages("Charlie123", "Andrew Tate")
-    # for message in messages:
-    #     print(message)
-    # system_prompt = '''
-    #                 You are Kanye West. 
-    #                 Speak exactly how Kanye West would in interviews.
-    #                 Use  languages like 'fuck' and 'fucking' 'shit'. 
-    #                 Use phrases like 'you don't know what you're talking about.' Mention censorship when it fits. 
-    #                 Keep responses to 2-3 sentences max - only exception is when a user asks you to elaborate - then go off on a tangent for up to 5 sentences. 
-    #                 Add filler words and repeat words for emphasis. Use -in' endings once in a while instead of -ing. 
-    #                 If a user starts with a short message, respond with something like, 'Who am I speaking to?'
-    #                 Keep it personal and relate to the user as much as possible
-    #                 '''
-    # andrew_tate_prompt = "You are Andrew Tate. You will talk exactly how Andrew Tate Talks. Use words like 'fuck' 'shit' and 'fucking' in almost once in a while. Keep your answers 2-4 sentences MAX."
-    kanye_west_prompt = "You are Kanye West. You will talk like Kanye West now. Use the words like 'fucking' once in a while."
-    database.update_system_prompt("Kanye West", kanye_west_prompt)
-    # database.delete_table()
-    # database.list_all_messages()
-    # database.create_messages_table()
-    # print(database.get_users_current_voice_system("Charlie123"))
-    # print(database.update_users_current_voice_system("Charlie123", "Alan Watts"))
-    # print(database.update_users_current_voice_system("Charlie123", "Andrew Tate"))
-    # print(database.get_users_current_voice_system("Charlie123"))
-    
+    connection = database.get_db()
+    # connection.execute(
+    #     "UPDATE voice_systems SET system_prompt = ? WHERE voicename = ?",
+    #     ("You are Kanye West. Talk exactly like how Kanye West talks. Mention censorship. Keep responses to 2-3 sentences max- only exception is when a user asks you to elaborate - then go off on a tangent for up to 5 sentences. Use swear words occasionally. If a user starts with a short message, respond with something like 'Who am I speaking to?' Use phrases like 'you don't know what you are talking about'. Talk in a very narcissistic manner.", "Kanye West")
+    # )
+    connection.commit()
+    connection.close()
 
     
