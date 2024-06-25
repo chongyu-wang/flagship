@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Keyboard, TouchableWithoutFeedback, Text, Button, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Keyboard, TouchableWithoutFeedback, Text, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { Audio } from 'expo-av';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Buffer } from 'buffer';
@@ -108,8 +108,14 @@ const Interviewer = ({ username, question }) => {
 
   // UI Rendering Logic
   return (
-    <TouchableWithoutFeedback onPressIn={startRecording} onPressOut={stopRecording}>
+
       <SafeAreaView className="bg-primary h-full">
+        <TouchableOpacity onPress={startRecording} className="mb-8 border-2 border-slate-500">
+          <Text className="text-white">start recording</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={stopRecording} className="border-2 border-slate-500">
+          <Text className="text-white">stop recording</Text>
+        </TouchableOpacity>
         {isRecording ? (
           <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
             <LottieView style={{ flex: 1, width: "70%", height: "70%" }} source={require("../assets/lottie/RecordingAnimation.json")} autoPlay loop />
@@ -120,7 +126,6 @@ const Interviewer = ({ username, question }) => {
           <TypingText text1={"You are now talking to an ai."} text2={"Please be sure to have your audio on."} text3={"Answer as much as you'd like and be yourself!"} time1={3000} time2={4000} time3={6000} />
         )}
       </SafeAreaView>
-    </TouchableWithoutFeedback>
   );
 };
 

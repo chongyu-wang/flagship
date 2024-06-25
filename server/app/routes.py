@@ -5,7 +5,7 @@ import random
 from .chat_manager import ChatManager
 from .user_manager import UserManager
 from .cache import voice_systems_cache, messages_cache, update_messages, update_user_voice_system, append_cache_messages, get_cache_messages, get_cache_voice_system
-from werkzeug.utils import secure_filename
+import io
 main = Blueprint('main', __name__)
 
 # Initialize managers
@@ -79,14 +79,28 @@ def handle_speech_to_text():
         return 'No file or username part', 400
     
     audio_file = request.files['file']
+    print(audio_file)
+    print(type(audio_file))
     
-    # Process the audio file to get transcription
-    user_text_transcription = chat_manager.get_text_from_speech(audio_file)
-    print(user_text_transcription)
+    # user_text_transcription = chat_manager.get_text_from_speech(audio_file)
+    # print(user_text_transcription)
 
-    # Save the file to the current directory
-    filename = secure_filename(audio_file.filename)  # Ensuring the filename is secure
-    audio_file.save(filename)
+    # audio_file = io.BufferedReader(io.BytesIO(audio_file.read()))
+    
+    # print(audio_file)
+
+    file_type = "m4a"
+    file_buffered_reader = io.BufferedReader(io.BytesIO(audio_file.read()))
+    file_bytes = file_buffered_reader.read()  # Read the entire content into bytes
+    content_type = "audio/m4a"
+    file = ("temp." + file_type, file_bytes, content_type)
+
+    print(file)
+
+    filename = "saved_audio." + file_type
+    # Write the bytes to a file in the current directory
+    with open(filename, "wb") as f:
+        f.write(file_bytes)
     
 
     return jsonify({"transcription": user_text_transcription}), 200
