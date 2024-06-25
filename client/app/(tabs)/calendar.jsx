@@ -1,19 +1,87 @@
 import moment from 'moment';
 import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Animated, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Calendar } from 'react-native-calendars';
+import { GestureHandlerRootView, PanGestureHandler, State } from 'react-native-gesture-handler';
 
 const AppCalendar = () => {
-  const [birthday] = useState('1990-01-01'); 
+  const [birthday, setBirthday] = useState('1990-01-01'); 
   const [selectedMonth, setSelectedMonth] = useState(null);
 
-  console.log("Selected Month:", selectedMonth);
+  const [opacity] = useState(new Animated.Value(0)); 
+  const [translateY] = useState(new Animated.Value(100));
+
+  const showCalendar = (month) => {
+    setSelectedMonth(month); 
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 1, 
+        duration: 300,
+        useNativeDriver: true
+      }),
+      Animated.timing(translateY, {
+        toValue: 0, 
+        duration: 300,
+        useNativeDriver: true
+      })
+    ]).start();
+  };
+
+  const hideCalendar = () => {
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 50,
+        useNativeDriver: true
+      }),
+      Animated.timing(translateY, {
+        toValue: 100,
+        duration: 50,
+        useNativeDriver: true
+      })
+    ]).start(() => setSelectedMonth(null));
+  };
+
+  const onGestureEvent = Animated.event(
+    [{ nativeEvent: { translationY: new Animated.Value(0) } }],
+    { useNativeDriver: true }
+  );
+
+  const onHandlerStateChange = event => {
+    if (event.nativeEvent.oldState === State.ACTIVE) {
+      if (event.nativeEvent.translationY > 100) {
+        hideCalendar();
+      }
+    }
+  };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#090909' }}>
-      <MonthGrid birthday={birthday} setSelectedMonth={setSelectedMonth} />
-      <CalendarView month={selectedMonth} />
-    </View>
+    <GestureHandlerRootView style={styles.root}>
+      <Text style={styles.headerText}>
+        Your life in months:
+      </Text>
+        <View style={{ flex: 1, backgroundColor: '#090909' }}>
+          <MonthGrid 
+            birthday={birthday}
+            postsData={postsData}
+            showCalendar={showCalendar}
+          />
+          {selectedMonth && (
+            <PanGestureHandler
+              onGestureEvent={onGestureEvent}
+              onHandlerStateChange={onHandlerStateChange}>
+              <Animated.View style={{
+                opacity: opacity,
+                transform: [{ translateY }],
+                height: styles.calendarContainer.height, 
+                overflow: 'hidden'
+              }}>
+                <CalendarView month={selectedMonth} />
+              </Animated.View>
+            </PanGestureHandler>
+          )}
+        </View>
+    </GestureHandlerRootView>
   );
 };
 
@@ -28,7 +96,15 @@ const calculateMonths = (startDate) => {
   return months;
 };
 
-const MonthGrid = ({ birthday, setSelectedMonth }) => {
+const getColorForPosts = (numPosts) => {
+  if (numPosts === 0) return '#EBEDF0'; // Gray for no posts
+  if (numPosts === 1) return '#AED9AF'; // Vibrant light green for one post
+  if (numPosts === 2) return '#82C987'; // More saturated green for two posts
+  if (numPosts === 3) return '#5BB66D'; // Deeper green for three posts
+  return '#309F50'; // Rich dark green for four or more posts
+};
+
+const MonthGrid = ({ birthday, postsData, showCalendar }) => {
   const months = calculateMonths(birthday);
 
   return (
@@ -36,15 +112,16 @@ const MonthGrid = ({ birthday, setSelectedMonth }) => {
       <FlatList
         data={months}
         numColumns={12} 
-        renderItem={({ item }) => (
-          <TouchableOpacity 
-          onPress={() => setSelectedMonth(item)}
-          style={styles.monthSquare}>
-            <View style={styles.monthSquare}>
-              
-            </View>
-          </TouchableOpacity>
-        )}
+        renderItem={({ item }) => {
+          const numPosts = postsData[item] || 0; 
+          const backgroundColor = getColorForPosts(numPosts);
+          return (
+            <TouchableOpacity 
+              onPress={() => showCalendar(item)}
+              style={[styles.monthSquare, { backgroundColor }]}>
+            </TouchableOpacity>
+          );
+        }}
         keyExtractor={item => item}
       />
     </View>
@@ -52,13 +129,24 @@ const MonthGrid = ({ birthday, setSelectedMonth }) => {
 };
 
 const CalendarView = ({ month }) => {
-  if (!month) return null;
-
   // Dummy data for posts
   const markedDates = {
-    '2023-05-01': { selected: true, selectedColor: 'green' },
-    '2023-05-15': { selected: true, selectedColor: 'green' }
-    // Add more dates based on the user's posts
+    '2024-01-01': { selected: true, selectedColor: 'green' },
+    '2024-02-15': { selected: true, selectedColor: 'green' },
+    '2024-02-28': { selected: true, selectedColor: 'green' },
+    '2024-03-03': { selected: true, selectedColor: 'green' },
+    '2024-03-06': { selected: true, selectedColor: 'green' },
+    '2024-03-26': { selected: true, selectedColor: 'green' },
+    '2024-04-20': { selected: true, selectedColor: 'green' },
+    '2024-04-21': { selected: true, selectedColor: 'green' },
+    '2024-04-22': { selected: true, selectedColor: 'green' },
+    '2024-04-23': { selected: true, selectedColor: 'green' },
+    '2024-05-15': { selected: true, selectedColor: 'green' },
+    '2024-05-18': { selected: true, selectedColor: 'green' },
+    '2024-05-19': { selected: true, selectedColor: 'green' },
+    '2024-06-06': { selected: true, selectedColor: 'green' },
+    '2024-06-28': { selected: true, selectedColor: 'green' },
+    // Add dates based on the user's posts
   };
 
   return (
@@ -68,18 +156,31 @@ const CalendarView = ({ month }) => {
         current={month}
         markedDates={markedDates}
         theme={calendarTheme}
+        hideExtraDays={true} 
+        showSixWeeks={true}
+        enableSwipeMonths={true}
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  root: { 
+    flex: 1,
+    backgroundColor: '#090909', 
+  },
+  headerText: {
+    color: '#D1D5DB', 
+    fontSize: 24, 
+    fontWeight: 'bold',
+    marginLeft: 25, 
+    marginTop: 100
+  },
   grid: {
-    flex: .826, 
+    flex: .86, 
     justifyContent: 'center', 
     paddingHorizontal: 20, 
-    paddingTop: 50,
-    backgroundColor: '#090909', 
+    paddingTop: 5,
   },
   monthSquare: {
     width: 21, 
@@ -90,17 +191,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#40C463',
     borderRadius: 3,
   },
-  monthText: {
-    color: '#FBC457', 
-    fontWeight: 'bold',
-  },
   calendarContainer: {
-    height: 350,  
+    flex: .89, 
+    height: 400,  
     overflow: 'hidden'
   }
 });
 
-const calendarTheme = {
+const calendarTheme = {  
   backgroundColor: '#090909',      
   calendarBackground: '#090909',    
   textSectionTitleColor: '#CDCDE0', 
@@ -119,7 +217,16 @@ const calendarTheme = {
   textDayHeaderFontWeight: '300',   
   textDayFontSize: 16,            
   textMonthFontSize: 16,            
-  textDayHeaderFontSize: 16         
+  textDayHeaderFontSize: 15         
 }
+
+const postsData = {
+  '2024-01': 1,
+  '2024-02': 2,
+  '2024-03': 3,
+  '2024-04': 4,
+  '2024-05': 3,
+  '2024-06': 2,
+};
 
 export default AppCalendar;
