@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 import { View, Text, Animated, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { GestureHandlerRootView, PanGestureHandler, State } from 'react-native-gesture-handler';
+import { AntDesign } from "@expo/vector-icons";
 
 const AppCalendar = () => {
   const [birthday, setBirthday] = useState('1990-01-01'); 
   const [selectedMonth, setSelectedMonth] = useState(null);
+  const [sortAscending, setSortAscending] = useState(true);
 
   const [opacity] = useState(new Animated.Value(0)); 
   const [translateY] = useState(new Animated.Value(100));
@@ -57,35 +59,42 @@ const AppCalendar = () => {
 
   return (
     <GestureHandlerRootView style={styles.root}>
-      <Text style={styles.headerText}>
-        Your life in months:
-      </Text>
-        <View style={{ flex: 1, backgroundColor: '#090909' }}>
-          <MonthGrid 
-            birthday={birthday}
-            postsData={postsData}
-            showCalendar={showCalendar}
-          />
-          {selectedMonth && (
-            <PanGestureHandler
-              onGestureEvent={onGestureEvent}
-              onHandlerStateChange={onHandlerStateChange}>
-              <Animated.View style={{
-                opacity: opacity,
-                transform: [{ translateY }],
-                height: styles.calendarContainer.height, 
-                overflow: 'hidden'
-              }}>
-                <CalendarView month={selectedMonth} />
-              </Animated.View>
-            </PanGestureHandler>
-          )}
-        </View>
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerText}>
+          Your life in months:
+        </Text>
+        <TouchableOpacity onPress={() => { setSortAscending((prev) => !prev) }} style={styles.sortButton}>
+          <AntDesign name={sortAscending ? 'up' : 'down'} size={15} color="black" />
+        </TouchableOpacity>
+      </View>
+      
+      <View style={{ flex: 1, backgroundColor: '#090909' }}>
+        <MonthGrid 
+          birthday={birthday}
+          postsData={postsData}
+          showCalendar={showCalendar}
+          sortAcscending={sortAscending}
+        />
+        {selectedMonth && (
+          <PanGestureHandler
+            onGestureEvent={onGestureEvent}
+            onHandlerStateChange={onHandlerStateChange}>
+            <Animated.View style={{
+              opacity: opacity,
+              transform: [{ translateY }],
+              height: styles.calendarContainer.height, 
+              overflow: 'hidden'
+            }}>
+              <CalendarView month={selectedMonth} />
+            </Animated.View>
+          </PanGestureHandler>
+        )}
+      </View>
     </GestureHandlerRootView>
   );
 };
 
-const calculateMonths = (startDate) => {
+const calculateMonths = (startDate, sortAcscending) => {
   const start = moment(startDate);
   const end = moment();
   const months = [];
@@ -93,7 +102,7 @@ const calculateMonths = (startDate) => {
     months.push(start.format('YYYY-MM'));
     start.add(1, 'month');
   }
-  return months;
+  return sortAcscending ? months : months.reverse();
 };
 
 const getColorForPosts = (numPosts) => {
@@ -104,8 +113,8 @@ const getColorForPosts = (numPosts) => {
   return '#309F50'; // Rich dark green for four or more posts
 };
 
-const MonthGrid = ({ birthday, postsData, showCalendar }) => {
-  const months = calculateMonths(birthday);
+const MonthGrid = ({ birthday, postsData, sortAcscending, showCalendar }) => {
+  const months = calculateMonths(birthday, sortAcscending);
 
   return (
     <View style={styles.grid}>
@@ -169,12 +178,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#090909', 
   },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    marginTop: 100
+  },
   headerText: {
     color: '#D1D5DB', 
     fontSize: 24, 
     fontWeight: 'bold',
     marginLeft: 25, 
-    marginTop: 100
   },
   grid: {
     flex: .86, 
@@ -183,8 +197,8 @@ const styles = StyleSheet.create({
     paddingTop: 5,
   },
   monthSquare: {
-    width: 21, 
-    height: 21, 
+    width: 22, 
+    height: 22, 
     justifyContent: 'center',
     alignItems: 'center',
     margin: 5, 
@@ -195,6 +209,16 @@ const styles = StyleSheet.create({
     flex: .89, 
     height: 400,  
     overflow: 'hidden'
+  },
+  sortButton: {
+    backgroundColor: '#FBC457',
+    marginLeft: 140,
+    width: 22, 
+    height: 22, 
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 5, 
+    borderRadius: 3,
   }
 });
 
@@ -209,7 +233,7 @@ const calendarTheme = {
   textDisabledColor: '#2D2D2D',   
   dotColor: '#F6C252',              
   selectedDotColor: '#000',         
-  arrowColor: '#F5BC60',            
+  arrowColor: '#FBC457',            
   monthTextColor: '#FBC457',        
   indicatorColor: '#F5BC60',       
   textDayFontWeight: '300',         
