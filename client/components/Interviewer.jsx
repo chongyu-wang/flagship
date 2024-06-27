@@ -107,6 +107,9 @@ const Interviewer = ({ username, question }) => {
   };
 
   // UI Rendering Logic
+  // isLoading
+  // isPlaying
+  // isRecording
   return (
 
       <SafeAreaView className="bg-primary h-full">

@@ -30,7 +30,7 @@ export default function App() {
   }
 
   else if (!isLoading && isLoggedIn && !surveyCompleted) {
-    return <Redirect href="/survey" />;
+    return <Redirect href="/home" />;
   }
 
   return (
