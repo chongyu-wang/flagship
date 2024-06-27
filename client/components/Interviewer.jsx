@@ -125,15 +125,15 @@ const Interviewer = ({ username, question, isLastQuestion, onNextQuestion, onSub
         <TouchableOpacity onPress={stopRecording} className="border-2 border-slate-500">
           <Text className="text-white">stop recording</Text>
         </TouchableOpacity>
-        {isRecording ? (
+        {/* {isRecording ? (
           <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
-            <LottieView style={{ flex: 1, width: "70%", height: "70%" }} source={require("../assets/lottie/RecordingAnimation.json")} autoPlay loop />
+            //<LottieView style={{ flex: 1, width: "70%", height: "70%" }} source={require("../assets/lottie/RecordingAnimation.json")} autoPlay loop />
           </View>
         ) : isLoading ? (
-          <LottieView style={{ flex: 1 }} source={require("../assets/lottie/ChatLoadingAnimation.json")} autoPlay loop />
+          /<LottieView style={{ flex: 1 }} source={require("../assets/lottie/ChatLoadingAnimation.json")} autoPlay loop />
         ) : (
           <TypingText text1={"You are now talking to an ai."} text2={"Please be sure to have your audio on."} text3={"Answer as much as you'd like and be yourself!"} time1={3000} time2={4000} time3={6000} />
-        )}
+        )} */}
       </SafeAreaView>
   );
 };
