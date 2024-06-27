@@ -33,6 +33,7 @@ export default function Survey() {
     });
 
     const registerAnswer = (newAnswer) => {
+        console.log("registering answer");
         return new Promise((resolve) => {
             setAnswers((answers) => {
                 const updatedAnswers = [...answers, newAnswer];
@@ -127,14 +128,11 @@ export default function Survey() {
                 </View>
             ):
             (<Interviewer
+                username={curUser}
                 question={questions[answers.length]}
                 isLastQuestion={isLastQuestion}
-                setAnswers={setAnswers}
-                setSurveyPhase={setSurveyPhase}
                 onNextQuestion={onNextQuestion}
                 onSubmit={onSubmit}
-                displayDate={surveyPhase === 0 && answers.length === 2}
-                surveyPhase={surveyPhase}
             />)}
         </SafeAreaView>
     );
