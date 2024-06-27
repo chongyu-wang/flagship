@@ -12,6 +12,7 @@ import { getCurrentUser, signIn } from '../../lib/appwrite';
 import LottieView from 'lottie-react-native';
 import { SearchBar } from 'react-native-elements'
 import { AntDesign, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { registerUserToBackend } from '../../hooks/useApi';
 
 
 const Home = () => {
@@ -36,9 +37,11 @@ const Home = () => {
     const fetchUser = async () => {
       const result = await getCurrentUser();
       setUser(result.username);
+      await registerUserToBackend(result.username, result.email);
     };
 
     fetchUser();
+    
   }, []);
 
   return (

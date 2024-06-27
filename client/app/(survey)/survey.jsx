@@ -128,7 +128,13 @@ export default function Survey() {
             ):
             (<Interviewer
                 question={questions[answers.length]}
-                username={curUser}
+                isLastQuestion={isLastQuestion}
+                setAnswers={setAnswers}
+                setSurveyPhase={setSurveyPhase}
+                onNextQuestion={onNextQuestion}
+                onSubmit={onSubmit}
+                displayDate={surveyPhase === 0 && answers.length === 2}
+                surveyPhase={surveyPhase}
             />)}
         </SafeAreaView>
     );

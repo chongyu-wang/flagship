@@ -165,4 +165,9 @@ def process_clone():
     responses = user_manager.get_user_response_for_training(username)
     system_prompt = user_manager.get_system_prompt_from_response(responses)
 
+@main.route('/api/clone-voice')
+def clone_voice():
+    pass
+
+
 

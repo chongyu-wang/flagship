@@ -17,7 +17,7 @@ export default function App() {
     const checkUser = async () => {
       if (!isLoading && isLoggedIn && user.username && user.email) {
   
-        await registerUserToBackend(user.username, user.email);
+        // await registerUserToBackend(user.username, user.email);
         console.log("registering user");
       }
     };
@@ -30,7 +30,7 @@ export default function App() {
   }
 
   else if (!isLoading && isLoggedIn && !surveyCompleted) {
-    return <Redirect href="/home" />;
+    return <Redirect href="/survey" />;
   }
 
   return (

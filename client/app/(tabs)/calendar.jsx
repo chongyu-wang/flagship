@@ -4,6 +4,7 @@ import { View, Text, Animated, FlatList, TouchableOpacity, StyleSheet } from 're
 import { Calendar } from 'react-native-calendars';
 import { GestureHandlerRootView, PanGestureHandler, State } from 'react-native-gesture-handler';
 import { AntDesign } from "@expo/vector-icons";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const AppCalendar = () => {
   const [birthday, setBirthday] = useState('1990-01-01'); 
@@ -58,7 +59,8 @@ const AppCalendar = () => {
   };
 
   return (
-    <GestureHandlerRootView style={styles.root}>
+    <SafeAreaView style={styles.root}>
+    <GestureHandlerRootView>
       <View style={styles.headerContainer}>
         <Text style={styles.headerText}>
           Your life in months:
@@ -91,6 +93,7 @@ const AppCalendar = () => {
         )}
       </View>
     </GestureHandlerRootView>
+    </SafeAreaView>
   );
 };
 
@@ -176,7 +179,7 @@ const CalendarView = ({ month }) => {
 const styles = StyleSheet.create({
   root: { 
     flex: 1,
-    backgroundColor: '#090909', 
+    backgroundColor: '#090909',
   },
   headerContainer: {
     flexDirection: 'row',
