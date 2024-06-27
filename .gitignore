@@ -27,3 +27,7 @@ env/
 
 expo-env.d.ts
 # @end expo-cli
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
